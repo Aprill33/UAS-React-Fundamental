@@ -1,3 +1,9 @@
+/**
+ * FILE: /src/Components/CustomAlert.jsx
+ * TUJUAN: Komponen UI yang dapat digunakan berulang (Reusable Component).
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
 import React from "react";
 import { 
   Lock, 
@@ -111,26 +117,26 @@ const CustomAlert = ({
     const titleColor = isRed ? "text-rose-900" : "text-pink-800";
 
     return (
-      <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[70] animate-in slide-in-from-top-8 fade-in duration-300 w-[90%] max-w-md">
-        <div className={`bg-white rounded-2xl shadow-xl border ${borderColor} p-4 flex items-start gap-4 relative`}>
-          <div className={`w-10 h-10 shrink-0 ${currentConfig.bgColor} ${currentConfig.textColor} rounded-full flex items-center justify-center shadow-sm`}>
-            <IconComponent size={20} />
+      <div className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[70] animate-in slide-in-from-top-8 fade-in duration-300 w-[85%] sm:w-[90%] max-w-md">
+        <div className={`bg-white rounded-2xl shadow-xl border ${borderColor} p-3 sm:p-4 flex items-start gap-3 sm:gap-4 relative`}>
+          <div className={`w-8 h-8 sm:w-10 sm:h-10 shrink-0 ${currentConfig.bgColor} ${currentConfig.textColor} rounded-full flex items-center justify-center shadow-sm`}>
+            <IconComponent size={16} className="sm:w-5 sm:h-5" />
           </div>
           
-          <div className="flex-1 pt-0.5">
-            <h4 className={`font-bold text-sm ${titleColor} flex items-center gap-1.5`}>
+          <div className="flex-1 pt-0 sm:pt-0.5">
+            <h4 className={`font-bold text-xs sm:text-sm ${titleColor} flex items-center gap-1.5 leading-tight mb-0.5 sm:mb-0`}>
               {title || currentConfig.defaultTitle}
             </h4>
-            <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+            <p className="text-[10px] sm:text-xs text-gray-500 sm:mt-0.5 leading-relaxed">
               {message}
             </p>
           </div>
 
           <button 
             onClick={onClose} 
-            className="p-1.5 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition cursor-pointer"
+            className="p-1 sm:p-1.5 hover:bg-gray-100 rounded-full text-gray-400 hover:text-gray-600 transition cursor-pointer"
           >
-            <X size={16} />
+            <X size={14} className="sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
@@ -140,38 +146,38 @@ const CustomAlert = ({
   // Tampilan Modal Default untuk tipe lainnya
   return (
     <div className="fixed inset-0 w-screen h-screen z-[60] flex items-center justify-center bg-black/20 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-[1.5rem] max-w-[280px] w-full p-5 shadow-2xl border border-pink-100 text-center space-y-3 relative animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-[1.5rem] max-w-[90%] w-80 sm:w-96 p-6 sm:p-8 shadow-2xl border border-pink-100 text-center space-y-4 relative animate-in zoom-in-95 duration-200">
         
         {/* Tombol Silang Pojok Atas */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 w-6 h-6 rounded-full bg-pink-50 hover:bg-pink-100 text-pink-400 flex items-center justify-center transition cursor-pointer"
+          className="absolute top-4 right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-pink-50 hover:bg-pink-100 text-pink-400 flex items-center justify-center transition cursor-pointer"
         >
-          <X size={12} />
+          <X size={14} />
         </button>
 
         {/* Ikon Alert Utama */}
-        <div className={`w-12 h-12 mx-auto ${currentConfig.bgColor} ${currentConfig.textColor} rounded-full flex items-center justify-center shadow-xs`}>
-          <IconComponent size={22} />
+        <div className={`w-14 h-14 sm:w-16 sm:h-16 mx-auto ${currentConfig.bgColor} ${currentConfig.textColor} rounded-full flex items-center justify-center shadow-xs`}>
+          <IconComponent size={28} className="sm:w-8 sm:h-8" />
         </div>
 
         {/* Judul & Pesan */}
-        <div className="space-y-1">
-          <h4 className={`font-serif font-bold text-base ${currentConfig.textColor.replace('text-', 'text-')} flex items-center justify-center gap-1.5`}>
+        <div className="space-y-2">
+          <h4 className={`font-serif font-bold text-lg sm:text-xl ${currentConfig.textColor.replace('text-', 'text-')} flex items-center justify-center gap-1.5`}>
             <span>{title || currentConfig.defaultTitle}</span>
           </h4>
-          <p className="text-[11px] text-gray-500 leading-relaxed px-2">
+          <p className="text-xs sm:text-sm text-gray-500 leading-relaxed px-2">
             {message}
           </p>
         </div>
 
         {/* Tombol Aksi */}
-        <div className="pt-2 space-y-2">
+        <div className="pt-3 space-y-2 sm:space-y-3">
           <button
             type="button"
             onClick={onConfirm || onClose}
-            className={`w-full py-2.5 ${currentConfig.btnColor} hover:opacity-90 text-white font-bold text-[11px] rounded-full shadow-sm transition cursor-pointer flex items-center justify-center gap-2`}
+            className={`w-full py-3 sm:py-3.5 ${currentConfig.btnColor} hover:opacity-90 text-white font-bold text-xs sm:text-sm rounded-full shadow-sm transition cursor-pointer flex items-center justify-center gap-2`}
           >
             <span>{confirmText}</span>
           </button>
@@ -180,7 +186,7 @@ const CustomAlert = ({
             <button
               type="button"
               onClick={onClose}
-              className={`w-full py-2 bg-gray-50 hover:bg-gray-100 text-gray-500 font-bold text-[11px] rounded-full transition cursor-pointer`}
+              className={`w-full py-2.5 sm:py-3 bg-gray-50 hover:bg-gray-100 text-gray-500 font-bold text-xs sm:text-sm rounded-full transition cursor-pointer`}
             >
               {cancelText}
             </button>

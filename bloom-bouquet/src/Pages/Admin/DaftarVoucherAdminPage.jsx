@@ -1,46 +1,95 @@
-import { useContext, useState } from "react";
+/**
+ * FILE: /src/Pages/Admin/DaftarVoucherAdminPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useRef: Menyimpan referensi elemen DOM atau nilai mutabel yang tidak memicu re-render.
+import { useContext, useState, useRef } from "react";
 import { VoucherContext } from "../../context/VoucherContext";
-import { Tag, Plus, Trash2, Power, Percent, DollarSign, ArrowLeft } from "lucide-react";
+import { Tag, Plus, Trash2, Power, Percent, DollarSign, ArrowLeft, Edit } from "lucide-react";
 import { useOutletContext, useNavigate } from "react-router-dom";
+import CustomAlert from "../../Components/CustomAlert";
+import CustomDropdown from "../../Components/CustomDropdown";
 
 const DaftarVoucherAdminPage = () => {
-  const { vouchers, addVoucher, removeVoucher, toggleVoucherStatus } = useContext(VoucherContext);
+  const { vouchers, addVoucher, updateVoucher, removeVoucher, toggleVoucherStatus } = useContext(VoucherContext);
   const { showAlert } = useOutletContext();
   const navigate = useNavigate();
+  // [DI LUAR MODUL] useRef: Menyimpan referensi elemen DOM atau nilai mutabel yang tidak memicu re-render.
+  const formRef = useRef(null);
   
   const [isAdding, setIsAdding] = useState(false);
-  const [newVoucher, setNewVoucher] = useState({ code: "", type: "percent", value: 10 });
+  const [editingVoucherId, setEditingVoucherId] = useState(null);
+  const [newVoucher, setNewVoucher] = useState({ code: "", type: "percent", value: 10, category: "produk", minPurchase: 0 });
+  const [voucherToDelete, setVoucherToDelete] = useState(null);
 
   const handleAdd = (e) => {
+    // [DI LUAR MODUL] preventDefault: Mencegah aksi bawaan browser (misal form submit page reload).
     e.preventDefault();
     if (!newVoucher.code.trim()) {
       showAlert("error", "Kode voucher tidak boleh kosong!");
       return;
     }
     
-    // Cek duplikat
-    if (vouchers.some(v => v.code.toUpperCase() === newVoucher.code.toUpperCase())) {
-      showAlert("error", "Kode voucher sudah ada!");
-      return;
+    if (editingVoucherId) {
+      // Cek duplikat saat edit
+      const isDuplicate = vouchers.some(v => v.id !== editingVoucherId && v.code.toUpperCase() === newVoucher.code.toUpperCase());
+      if (isDuplicate) {
+        showAlert("error", "Kode voucher sudah ada!");
+        return;
+      }
+      updateVoucher(editingVoucherId, {
+        code: newVoucher.code.toUpperCase(),
+        type: newVoucher.type,
+        value: Number(newVoucher.value),
+        category: newVoucher.category,
+        minPurchase: Number(newVoucher.minPurchase)
+      });
+      showAlert("success", "Voucher berhasil diperbarui!");
+    } else {
+      // Cek duplikat saat tambah
+      if (vouchers.some(v => v.code.toUpperCase() === newVoucher.code.toUpperCase())) {
+        showAlert("error", "Kode voucher sudah ada!");
+        return;
+      }
+      addVoucher({
+        id: Date.now().toString(),
+        code: newVoucher.code.toUpperCase(),
+        type: newVoucher.type,
+        value: Number(newVoucher.value),
+        category: newVoucher.category,
+        minPurchase: Number(newVoucher.minPurchase),
+        isActive: true
+      });
+      showAlert("success", "Voucher berhasil ditambahkan!");
     }
-
-    addVoucher({
-      id: Date.now().toString(),
-      code: newVoucher.code.toUpperCase(),
-      type: newVoucher.type,
-      value: Number(newVoucher.value),
-      isActive: true
-    });
     
     setIsAdding(false);
-    setNewVoucher({ code: "", type: "percent", value: 10 });
-    showAlert("success", "Voucher berhasil ditambahkan!");
+    setEditingVoucherId(null);
+    setNewVoucher({ code: "", type: "percent", value: 10, category: "produk", minPurchase: 0 });
+  };
+
+  const handleEditClick = (v) => {
+    setIsAdding(true);
+    setEditingVoucherId(v.id);
+    setNewVoucher({
+      code: v.code,
+      type: v.type,
+      value: v.value,
+      category: v.category || 'produk',
+      minPurchase: v.minPurchase || 0
+    });
+    // Scroll to form
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   return (
     <div className="space-y-6 animate-fadeIn max-w-5xl mx-auto">
       <button 
-        onClick={() => navigate(-1)} 
+        onClick={() => navigate("/admin")}
         className="flex items-center gap-2 text-pink-600 hover:text-pink-700 bg-white px-4 py-2 rounded-full border border-pink-200 shadow-sm transition hover:shadow-md cursor-pointer w-fit"
       >
         <ArrowLeft size={16} /> Kembali
@@ -57,20 +106,42 @@ const DaftarVoucherAdminPage = () => {
         <div className="flex-1 h-[1.5px] bg-pink-200" />
       </div>
 
-      <div className="flex justify-between items-center bg-white p-4 rounded-3xl border border-pink-100 shadow-sm">
-        <h2 className="text-xl font-bold text-pink-900 flex items-center gap-2 px-2">
-          <Tag size={24} className="text-pink-500" /> Daftar Voucher
+      <CustomAlert
+        isOpen={!!voucherToDelete}
+        onClose={() => setVoucherToDelete(null)}
+        onConfirm={() => {
+          if (voucherToDelete) removeVoucher(voucherToDelete.id);
+          setVoucherToDelete(null);
+        }}
+        type="delete_confirm"
+        title="Hapus Voucher?"
+        message={`Apakah Anda yakin ingin menghapus voucher "${voucherToDelete?.code}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmText="Ya, Hapus"
+        showCancel={true}
+      />
+
+      <div className="flex justify-between items-center bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-pink-100 shadow-sm">
+        <h2 className="text-sm sm:text-xl font-bold text-pink-900 flex items-center gap-1.5 sm:gap-2 px-1 sm:px-2">
+          <Tag size={20} className="text-pink-500 sm:w-6 sm:h-6" /> 
+          <span className="hidden sm:inline">Daftar Voucher</span>
+          <span className="sm:hidden">Voucher</span>
         </h2>
         <button 
-          onClick={() => setIsAdding(!isAdding)}
-          className="px-5 py-2.5 bg-pink-500 hover:bg-pink-600 text-white text-sm font-bold rounded-2xl shadow-xs transition hover:-translate-y-0.5 cursor-pointer flex items-center gap-2"
+          onClick={() => {
+            if (isAdding) {
+              setEditingVoucherId(null);
+              setNewVoucher({ code: "", type: "percent", value: 10, category: "produk", minPurchase: 0 });
+            }
+            setIsAdding(!isAdding);
+          }}
+          className="px-3 sm:px-5 py-2 sm:py-2.5 bg-pink-500 hover:bg-pink-600 text-white text-[11px] sm:text-sm font-bold rounded-xl sm:rounded-2xl shadow-xs transition hover:-translate-y-0.5 cursor-pointer flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"
         >
-          {isAdding ? <><Power size={18} /> <span>Batal</span></> : <><Plus size={18} /> <span>Buat Voucher Baru</span></>}
+          {isAdding ? <><Power size={16} className="sm:w-[18px] sm:h-[18px]" /> <span>Batal</span></> : <><Plus size={16} className="sm:w-[18px] sm:h-[18px]" /> <span className="hidden sm:inline">Buat Voucher Baru</span><span className="sm:hidden">Buat Baru</span></>}
         </button>
       </div>
 
       {isAdding && (
-        <div className="bg-white p-6 rounded-3xl shadow-sm border border-pink-100 animate-in slide-in-from-top-4 duration-300">
+        <div ref={formRef} className="bg-white p-6 rounded-3xl shadow-sm border border-pink-100 animate-in slide-in-from-top-4 duration-300">
           <form onSubmit={handleAdd} className="flex flex-col md:flex-row gap-4 items-end">
             <div className="w-full md:w-1/3">
               <label className="block text-xs font-bold text-pink-700 uppercase tracking-wide mb-1.5">Kode Voucher</label>
@@ -84,15 +155,16 @@ const DaftarVoucherAdminPage = () => {
               />
             </div>
             <div className="w-full md:w-1/4">
-              <label className="block text-xs font-bold text-pink-700 uppercase tracking-wide mb-1.5">Tipe Diskon</label>
-              <select 
+              <label className="block text-[10px] sm:text-xs font-bold text-pink-700 uppercase tracking-wide mb-1.5">Tipe Diskon</label>
+              <CustomDropdown 
                 value={newVoucher.type} 
-                onChange={(e) => setNewVoucher({ ...newVoucher, type: e.target.value })} 
-                className="w-full p-3 text-sm font-medium text-gray-700 border border-pink-200 rounded-xl bg-pink-50/50 hover:bg-pink-100/50 focus:outline-none focus:ring-2 focus:ring-pink-400 transition cursor-pointer"
-              >
-                <option value="percent">Persen (%)</option>
-                <option value="nominal">Nominal (Rp)</option>
-              </select>
+                onChange={(val) => setNewVoucher({ ...newVoucher, type: val })} 
+                options={[
+                  { value: "percent", label: "Persen (%)" },
+                  { value: "nominal", label: "Nominal (Rp)" }
+                ]}
+                className="w-full h-11 [&>div]:h-full"
+              />
             </div>
             <div className="w-full md:w-1/4">
               <label className="block text-xs font-bold text-pink-700 uppercase tracking-wide mb-1.5">Besaran Diskon</label>
@@ -110,9 +182,40 @@ const DaftarVoucherAdminPage = () => {
                 />
               </div>
             </div>
-            <div className="w-full md:w-auto">
+            
+            <div className="w-full md:w-1/4">
+              <label className="block text-[10px] sm:text-xs font-bold text-pink-700 uppercase tracking-wide mb-1.5">Kategori</label>
+              <CustomDropdown 
+                value={newVoucher.category} 
+                onChange={(val) => setNewVoucher({ ...newVoucher, category: val })} 
+                options={[
+                  { value: "produk", label: "Diskon Produk" },
+                  { value: "ongkir", label: "Diskon Ongkir" }
+                ]}
+                className="w-full h-11 [&>div]:h-full"
+              />
+            </div>
+            
+            <div className="w-full md:w-1/4">
+              <label className="block text-xs font-bold text-pink-700 uppercase tracking-wide mb-1.5">Min. Belanja</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-500 font-bold">
+                  Rp
+                </span>
+                <input 
+                  type="number" 
+                  min="0"
+                  value={newVoucher.minPurchase} 
+                  onChange={(e) => setNewVoucher({ ...newVoucher, minPurchase: e.target.value })} 
+                  className="w-full p-3 pl-8 text-sm border border-pink-200 rounded-xl bg-pink-50/30 focus:outline-none focus:ring-2 focus:ring-pink-400 transition" 
+                  required 
+                />
+              </div>
+            </div>
+
+            <div className="w-full md:w-auto mt-4 md:mt-0">
               <button type="submit" className="w-full md:w-auto px-6 py-3 bg-pink-500 text-white rounded-xl font-bold hover:bg-pink-600 transition shadow-sm cursor-pointer">
-                Simpan
+                {editingVoucherId ? 'Simpan Perubahan' : 'Simpan'}
               </button>
             </div>
           </form>
@@ -133,10 +236,16 @@ const DaftarVoucherAdminPage = () => {
                 {v.type === 'percent' ? <Percent size={24} /> : <DollarSign size={24} />}
               </div>
               <div className="space-y-1 w-full">
-                <h3 className="font-bold text-lg text-gray-800 tracking-wide">{v.code}</h3>
+                <div className="flex justify-between items-start">
+                  <h3 className="font-bold text-lg text-gray-800 tracking-wide">{v.code}</h3>
+                  <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-md ${v.category === 'ongkir' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'}`}>
+                    {v.category === 'ongkir' ? 'Ongkir' : 'Produk'}
+                  </span>
+                </div>
                 <p className={`text-xl font-black ${v.isActive ? 'text-pink-600' : 'text-gray-500'}`}>
                   {v.type === 'percent' ? `${v.value}% OFF` : `Rp ${v.value.toLocaleString('id-ID')} OFF`}
                 </p>
+                <p className="text-[10px] text-gray-500 font-medium">Min. Belanja: Rp {(v.minPurchase || 0).toLocaleString('id-ID')}</p>
               </div>
             </div>
 
@@ -148,7 +257,13 @@ const DaftarVoucherAdminPage = () => {
                 {v.isActive ? 'Matikan' : 'Aktifkan'}
               </button>
               <button 
-                onClick={() => removeVoucher(v.id)}
+                onClick={() => handleEditClick(v)}
+                className="w-10 h-10 flex items-center justify-center bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white rounded-xl transition cursor-pointer"
+              >
+                <Edit size={16} />
+              </button>
+              <button 
+                onClick={() => setVoucherToDelete(v)}
                 className="w-10 h-10 flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition cursor-pointer"
               >
                 <Trash2 size={16} />

@@ -1,40 +1,39 @@
+/**
+ * FILE: /src/Pages/Admin/BerandaAdminPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Flower, Package, ShoppingCart, Clock, X } from "lucide-react";
 import { flowers as initialFlowers } from "../../Data/Flowers";
 import Pagination from "../../Components/Pagination";
+import { getAllAdminOrders } from "../../context/OrderContext";
+import usePagination from "../../hooks/usePagination";
 
 const BerandaAdminPage = () => {
   const navigate = useNavigate();
 
   const [flowerList, setFlowerList] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("customFlowersData");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     return saved ? JSON.parse(saved) : initialFlowers;
   });
 
   const [orders, setOrders] = useState(() => {
-    let allOrders = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("orders_")) {
-        const username = key.replace("orders_", "");
-        const userOrders = JSON.parse(localStorage.getItem(key));
-        const mappedOrders = userOrders.map(o => ({
-          ...o,
-          customer: o.customer || username,
-          itemsDisplay: Array.isArray(o.items) 
-            ? o.items.map(item => `${item.namaProduk} (${item.qty}x)`).join(", ")
-            : o.items,
-          totalDisplay: o.totalHarga || o.total
-        }));
-        allOrders = [...allOrders, ...mappedOrders];
-      }
-    }
-    return allOrders.sort((a, b) => b.id.localeCompare(a.id));
+    return getAllAdminOrders().map(o => ({
+      ...o,
+      itemsDisplay: Array.isArray(o.items) 
+        ? o.items.map(item => `${item.namaProduk} (${item.qty}x)`).join(", ")
+        : o.items,
+      totalDisplay: o.totalHarga || o.total
+    }));
   });
 
-  const [topProductsPage, setTopProductsPage] = useState(1);
-  const itemsPerTopPage = 4;
+
 
   const totalProduk = flowerList.length;
   const produkTersedia = flowerList.filter(f => f.stok > 0).length;
@@ -50,10 +49,7 @@ const BerandaAdminPage = () => {
     }, 0);
 
   const allTopProducts = flowerList.filter(f => f.statusProduk === "Best Seller");
-  const indexOfLastTop = topProductsPage * itemsPerTopPage;
-  const indexOfFirstTop = indexOfLastTop - itemsPerTopPage;
-  const currentTopProducts = allTopProducts.slice(indexOfFirstTop, indexOfLastTop);
-  const totalTopPages = Math.ceil(allTopProducts.length / itemsPerTopPage);
+  const { currentData: currentTopProducts, totalPages: totalTopPages, currentPage: topProductsPage, setCurrentPage: setTopProductsPage } = usePagination(allTopProducts, 4);
   const recentOrders = orders.slice(0, 5);
 
   return (

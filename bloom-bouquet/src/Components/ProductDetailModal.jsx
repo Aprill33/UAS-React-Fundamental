@@ -4,7 +4,7 @@
  * KETERHUBUNGAN: Menerima props dari halaman induk (Home, FlowersPage, BouquetBuilder, dll).
  */
 
-import { X, Heart, ShoppingBag, Star, Package } from "lucide-react";
+import { X, Heart, ShoppingCart, Star, Package } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
@@ -12,7 +12,7 @@ import { AuthContext } from "../context/AuthContext";
 import CustomAlert from "./CustomAlert";
 
 const ProductDetailModal = ({ produk, isWishlisted, onClose, onToggleWishlist }) => {
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, setSelectedItems } = useContext(CartContext);
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
@@ -21,6 +21,8 @@ const ProductDetailModal = ({ produk, isWishlisted, onClose, onToggleWishlist })
 
   const handleAddToCart = () => {
     if (!currentUser) {
+      // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
+      // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
       sessionStorage.setItem("pendingBouquet", JSON.stringify(produk));
       setShowAlert(true);
       return;
@@ -48,6 +50,7 @@ const ProductDetailModal = ({ produk, isWishlisted, onClose, onToggleWishlist })
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-pink-50/60 backdrop-blur-md animate-in fade-in duration-200">
         <div 
           className="bg-white w-full max-w-[800px] max-h-[90vh] sm:max-h-[500px] rounded-[2rem] shadow-2xl overflow-hidden flex flex-col sm:flex-row relative animate-in zoom-in-95 duration-300 border border-pink-100"
+          // [DI LUAR MODUL] stopPropagation: Mencegah event merambat/bubble ke parent elemen HTML.
           onClick={(e) => e.stopPropagation()}
         >
         {/* Tombol Tutup */}
@@ -118,8 +121,10 @@ const ProductDetailModal = ({ produk, isWishlisted, onClose, onToggleWishlist })
             <div className="flex gap-2 sm:gap-3">
               <button 
                 onClick={(e) => {
+                  // [DI LUAR MODUL] stopPropagation: Mencegah event merambat/bubble ke parent elemen HTML.
                   e.stopPropagation();
                   if (!currentUser) {
+                    // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
                     sessionStorage.setItem("pendingFavorite", produk.id);
                     setShowAlert(true);
                     return;
@@ -139,10 +144,44 @@ const ProductDetailModal = ({ produk, isWishlisted, onClose, onToggleWishlist })
               <button 
                 onClick={handleAddToCart}
                 disabled={produk.stok === 0}
-                className="flex-1 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 disabled:from-gray-300 disabled:to-gray-400 disabled:text-gray-500 text-white font-bold py-3 sm:py-3.5 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition flex items-center justify-center gap-2 cursor-pointer"
+                className="p-3 sm:p-3.5 bg-pink-100 hover:bg-pink-200 text-pink-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl shadow-sm transition flex items-center justify-center shrink-0 cursor-pointer"
+                title={produk.stok === 0 ? "Stok Habis" : "Masukkan Keranjang"}
               >
-                <ShoppingBag size={18} />
-                <span className="text-xs sm:text-sm">{produk.stok === 0 ? "Stok Habis" : "Masukkan Keranjang"}</span>
+                <ShoppingCart size={20} />
+              </button>
+              
+              <button 
+                onClick={(e) => {
+                  // [DI LUAR MODUL] stopPropagation: Mencegah event merambat/bubble ke parent elemen HTML.
+                  e.stopPropagation();
+                  if (!currentUser) {
+                    // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
+                    // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
+                    sessionStorage.setItem("pendingCheckout", JSON.stringify(produk));
+                    setShowAlert(true);
+                    return;
+                  }
+                  // Pindah langsung ke checkout dengan membawa data produk (qty = 1 default)
+                  onClose();
+                  navigate("/checkout", { 
+                    state: { 
+                      buyNowItem: {
+                        id: produk.id,
+                        namaProduk: produk.namaProduk,
+                        harga: produk.diskon ? produk.harga - (produk.harga * produk.diskon / 100) : produk.harga,
+                        gambarProduk: produk.gambarProduk,
+                        kategori: produk.kategori,
+                        jenis: produk.jenis,
+                        diskon: produk.diskon,
+                        qty: 1
+                      }
+                    } 
+                  });
+                }}
+                disabled={produk.stok === 0}
+                className="flex-1 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 disabled:from-gray-300 disabled:to-gray-400 disabled:text-gray-500 text-white font-bold py-3 sm:py-3.5 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 transition flex items-center justify-center cursor-pointer"
+              >
+                <span className="text-xs sm:text-sm">{produk.stok === 0 ? "Stok Habis" : "Beli Sekarang"}</span>
               </button>
             </div>
           </div>

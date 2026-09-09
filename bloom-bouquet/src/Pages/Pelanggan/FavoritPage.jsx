@@ -1,3 +1,9 @@
+/**
+ * FILE: /src/Pages/Pelanggan/FavoritPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
 import { useContext, useState } from "react";
 import { FavoriteContext } from "../../context/FavoriteContext";
 import { AuthContext } from "../../context/AuthContext";
@@ -7,6 +13,7 @@ import ProductCard from "../../Components/ProductCard";
 import ProductDetailModal from "../../Components/ProductDetailModal";
 import Pagination from "../../Components/Pagination";
 import { Link, useNavigate } from "react-router-dom";
+import usePagination from "../../hooks/usePagination";
 
 const Favorites = () => {
   const { wishlist, toggleWishlist } = useContext(FavoriteContext);
@@ -14,23 +21,16 @@ const Favorites = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
-
   if (!currentUser) return null; // Protected route handles redirect
 
   const favoriteProducts = flowers.filter(flower => wishlist.includes(flower.id));
 
-  // Hitung data paginasi
-  const totalItems = favoriteProducts.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-  const currentFavorites = favoriteProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // Menggunakan custom hook paginasi
+  const { currentData: currentFavorites, totalPages, currentPage, setCurrentPage } = usePagination(favoriteProducts, 8);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    // [DI LUAR MODUL] window.scrollTo: Memanipulasi browser untuk menggulir halaman ke koordinat tertentu.
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -40,7 +40,7 @@ const Favorites = () => {
       {/* TOMBOL KEMBALI */}
       <div className="mb-6">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-pink-500 hover:text-white text-pink-600 font-bold text-xs rounded-full shadow-sm border border-pink-200 transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-x-1"
         >
           <ArrowLeft size={16} />

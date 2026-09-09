@@ -6,12 +6,15 @@
  *  - Menggunakan komponen `ProductDetailModal` dan `Pagination`.
  */
 
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import ProductDetailModal from "../../Components/ProductDetailModal";
 import CustomAlert from "../../Components/CustomAlert";
 import { FavoriteContext } from "../../context/FavoriteContext";
+import ProductCard from "../../Components/ProductCard";
+import usePagination from "../../hooks/usePagination";
 import Pagination from "../../Components/Pagination";
 import { 
   Heart, 
@@ -34,13 +37,10 @@ const FlowerMeaningDetail = () => {
   const { wishlist, toggleWishlist } = useContext(FavoriteContext);
   const [showAlert, setShowAlert] = useState(false);
 
-  // State untuk Halaman Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] window.scrollTo: Memanipulasi browser untuk menggulir halaman ke koordinat tertentu.
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    setCurrentPage(1);
   }, [id]);
 
   const currentFlower = flowerDataContent[id] || flowerDataContent["rose"];
@@ -62,11 +62,7 @@ const FlowerMeaningDetail = () => {
   );
   const displayProducts = filteredProducts.length > 0 ? filteredProducts : allFlowers;
 
-  // Perhitungan Data Pagination
-  const totalPages = Math.ceil(displayProducts.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = displayProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const { currentData: currentProducts, totalPages, currentPage, setCurrentPage } = usePagination(displayProducts, 4);
 
   const otherFlowers = exploreFlowersList.filter((item) => item.id !== (id || "rose"));
 
@@ -88,7 +84,7 @@ const FlowerMeaningDetail = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/arti-bunga")}
           className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-pink-500 hover:text-white text-pink-600 font-bold text-xs rounded-full shadow-sm border border-pink-200 transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-x-1"
         >
           <ArrowLeft size={16} />
@@ -103,7 +99,7 @@ const FlowerMeaningDetail = () => {
         </div>
         
         <div className="space-y-2">
-          <h1 className="text-4xl sm:text-5xl font-cursive font-bold text-pink-600">
+          <h1 className="text-3xl sm:text-5xl font-cursive font-bold text-pink-600 leading-tight">
             Makna & Filosofi Bunga {currentFlower.nama}
           </h1>
           <p className="text-sm sm:text-base text-pink-400 max-w-xl mx-auto leading-relaxed">
@@ -170,60 +166,25 @@ const FlowerMeaningDetail = () => {
         </div>
 
         {/* Grid Produk */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
           {currentProducts.map((prod) => (
-            <div 
-              key={prod.id} 
-              onClick={() => setSelectedProduct(prod)}
-              className="bg-white rounded-3xl border border-pink-100 overflow-hidden shadow-xs hover:shadow-md transition duration-300 flex flex-col justify-between cursor-pointer group p-3"
-            >
-              <div className="relative h-56 overflow-hidden rounded-2xl bg-pink-50/20">
-                <img
-                  src={prod.gambarProduk}
-                  alt={prod.namaProduk}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                />
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleToggleWishlist(prod.id);
-                  }}
-                  className="absolute top-3 right-3 bg-white/90 hover:bg-white text-pink-500 p-2 rounded-full shadow-sm transition hover:scale-110 cursor-pointer"
-                >
-                  <Heart size={16} fill={currentUser && wishlist.includes(prod.id) ? "#f8619c" : "none"} />
-                </button>
-              </div>
-
-              <div className="pt-3 px-1 pb-1 space-y-1.5">
-                <span className="text-[11px] font-bold text-pink-400 uppercase tracking-wide block">
-                  {prod.kategori}
-                </span>
-                <h3 className="font-serif font-bold text-pink-900 text-base leading-snug line-clamp-1">
-                  {prod.namaProduk}
-                </h3>
-                <div className="text-lg font-bold text-pink-600 pt-0.5">
-                  Rp {Number(prod.harga).toLocaleString("id-ID")}
-                </div>
-                <button 
-                  onClick={() => setSelectedProduct(prod)}
-                  className="w-full mt-2 py-2 bg-pink-50/70 hover:bg-pink-100 text-pink-600 font-bold text-xs rounded-full transition flex items-center justify-center gap-1.5 cursor-pointer border border-pink-100"
-                >
-                  <Eye size={15} />
-                  <span>Lihat Detail</span>
-                </button>
-              </div>
-            </div>
+            <ProductCard
+              key={prod.id}
+              produk={prod}
+              onOpenDetail={setSelectedProduct}
+              onToggleWishlist={handleToggleWishlist}
+              isWishlisted={currentUser && wishlist.includes(prod.id)}
+            />
           ))}
         </div>
 
-        {/* MENGGUNAKAN KOMPONEN PAGINATION PUSAT */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => {
-            setCurrentPage(page);
-          }}
-        />
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        )}
       </section>
 
       {/* JELAJAHI BUNGA LAINNYA */}

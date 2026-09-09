@@ -1,8 +1,16 @@
+/**
+ * FILE: /src/Pages/Admin/ProfilAdminPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useContext, useEffect } from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { User, Mail, Phone, Shield, Camera, Save, Flower, Edit3, LogOut } from "lucide-react";
 import { flowers as initialFlowers } from "../../Data/Flowers";
+import { getAllAdminOrders } from "../../context/OrderContext";
 
 const ProfilAdminPage = () => {
   const { showAlert } = useOutletContext();
@@ -17,6 +25,7 @@ const ProfilAdminPage = () => {
     password: currentUser?.password || ""
   });
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     if (currentUser) {
       setFormData({
@@ -34,27 +43,20 @@ const ProfilAdminPage = () => {
   };
 
   const handleSave = (e) => {
+    // [DI LUAR MODUL] preventDefault: Mencegah aksi bawaan browser (misal form submit page reload).
     e.preventDefault();
     updateProfile(formData);
     showAlert('success', 'Profil Anda berhasil diperbarui!');
   };
 
   const [flowerList, setFlowerList] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("customFlowersData");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     return saved ? JSON.parse(saved) : initialFlowers;
   });
 
-  const [orders, setOrders] = useState(() => {
-    let allOrders = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("orders_")) {
-        const userOrders = JSON.parse(localStorage.getItem(key));
-        allOrders = [...allOrders, ...userOrders];
-      }
-    }
-    return allOrders;
-  });
+  const [orders, setOrders] = useState(getAllAdminOrders);
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500 pb-10">
@@ -90,8 +92,18 @@ const ProfilAdminPage = () => {
           <div className="mb-2 w-full sm:w-auto">
             <button
                onClick={() => {
-                 logout();
-                 navigate("/masuk");
+                 showAlert(
+                   "warning",
+                   "Keluar dari Akun?",
+                   "Anda yakin ingin keluar dari panel admin?",
+                   () => {
+                     logout();
+                     navigate("/masuk");
+                   },
+                   null,
+                   "Ya, Keluar",
+                   "Batal"
+                 );
                }}
                className="w-full sm:w-auto px-6 py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold rounded-xl transition shadow-sm flex items-center justify-center gap-2 cursor-pointer"
             >

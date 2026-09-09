@@ -1,5 +1,12 @@
+/**
+ * FILE: /src/Pages/Pelanggan/CheckoutPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { CartContext } from "../../context/CartContext";
 import { AuthContext } from "../../context/AuthContext";
 import { OrderContext } from "../../context/OrderContext";
@@ -47,21 +54,37 @@ const EWALLET_OPTIONS = ["GoPay", "OVO", "DANA", "ShopeePay", "LinkAja"];
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
-  const { cartItems, selectedItems, totalAsli, totalDiskon, removeSelectedFromCart } = useContext(CartContext);
-  const checkoutItems = cartItems.filter(item => selectedItems.includes(item.id));
+  const location = useLocation();
+  const buyNowItem = location.state?.buyNowItem;
+
+  const { cartItems, selectedItems, totalAsli: cartTotalAsli, totalDiskon: cartTotalDiskon, removeSelectedFromCart } = useContext(CartContext);
+  
+  const checkoutItems = buyNowItem 
+    ? [buyNowItem] 
+    : cartItems.filter(item => selectedItems.includes(item.id));
+
+  const totalAsli = buyNowItem 
+    ? buyNowItem.harga * buyNowItem.qty 
+    : cartTotalAsli;
+
+  const totalDiskon = buyNowItem 
+    ? (buyNowItem.diskon ? (buyNowItem.harga * buyNowItem.diskon / 100) * buyNowItem.qty : 0)
+    : cartTotalDiskon;
   const { currentUser, updateProfile } = useContext(AuthContext);
-  const { addOrder } = useContext(OrderContext);
-  const { checkVoucher } = useContext(VoucherContext);
+  const { addOrder, orders } = useContext(OrderContext);
+  const { vouchers, checkVoucher } = useContext(VoucherContext);
 
   const [shippingCity, setShippingCity] = useState("");
   const [shippingAddress, setShippingAddress] = useState("");
   const [shippingPhone, setShippingPhone] = useState("");
   // STATE BARU: Menyimpan teks pesan yang akan ditulis di kartu ucapan (bersifat opsional)
   const [greetingMessage, setGreetingMessage] = useState("");
+  const [greetingFrom, setGreetingFrom] = useState("");
+  const [greetingTo, setGreetingTo] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Transfer Bank");
   const [paymentSubMethod, setPaymentSubMethod] = useState("");
   const [voucherCode, setVoucherCode] = useState("");
-  const [activeVoucher, setActiveVoucher] = useState(null);
+  const [activeVouchers, setActiveVouchers] = useState([]);
   const [voucherError, setVoucherError] = useState("");
 
   const [showAlert, setShowAlert] = useState(false);
@@ -70,8 +93,9 @@ const CheckoutPage = () => {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
-    if (cartItems.length === 0 && !isCheckingOut) {
+    if (checkoutItems.length === 0 && !isCheckingOut) {
       navigate("/keranjang");
     }
     if (currentUser?.address) {
@@ -83,7 +107,7 @@ const CheckoutPage = () => {
     if (currentUser?.phone) {
       setShippingPhone(currentUser.phone);
     }
-  }, [cartItems, navigate, currentUser, isCheckingOut]);
+  }, [checkoutItems.length, navigate, currentUser, isCheckingOut]);
 
   const handlePhoneChange = (e) => {
     let value = e.target.value;
@@ -127,35 +151,79 @@ const CheckoutPage = () => {
     setShippingPhone(formatted);
   };
 
-  const ongkir = ONGKIR_ZONES[shippingCity] || 0;
+  const baseOngkir = ONGKIR_ZONES[shippingCity] || 0;
+  const totalBelanjaProduk = totalAsli - totalDiskon;
   
   // Hitung diskon voucher
-  let voucherDiscount = 0;
-  if (activeVoucher) {
-    if (activeVoucher.type === "percent") {
-      voucherDiscount = (totalAsli - totalDiskon) * (activeVoucher.value / 100);
-    } else {
-      voucherDiscount = activeVoucher.value;
-    }
-    // Jangan sampai voucher melebihi harga produk
-    if (voucherDiscount > (totalAsli - totalDiskon)) {
-      voucherDiscount = totalAsli - totalDiskon;
-    }
-  }
+  let productDiscount = 0;
+  let shippingDiscount = 0;
 
-  const grandTotal = totalAsli - totalDiskon - voucherDiscount + ongkir;
+  activeVouchers.forEach(v => {
+    if (v.category === "ongkir") {
+      let discount = v.type === "percent" ? baseOngkir * (v.value / 100) : v.value;
+      shippingDiscount += discount;
+    } else {
+      let discount = v.type === "percent" ? totalBelanjaProduk * (v.value / 100) : v.value;
+      productDiscount += discount;
+    }
+  });
+
+  // Pastikan diskon tidak melebihi harga masing-masing
+  if (productDiscount > totalBelanjaProduk) productDiscount = totalBelanjaProduk;
+  if (shippingDiscount > baseOngkir) shippingDiscount = baseOngkir;
+
+  const finalOngkir = baseOngkir - shippingDiscount;
+  const grandTotal = totalBelanjaProduk - productDiscount + finalOngkir;
 
   const handleApplyVoucher = () => {
     setVoucherError("");
     if (!voucherCode.trim()) return;
     
     const v = checkVoucher(voucherCode);
-    if (v) {
-      setActiveVoucher(v);
-    } else {
-      setActiveVoucher(null);
+    if (!v) {
       setVoucherError("Kode voucher tidak valid atau sudah tidak aktif.");
+      return;
     }
+
+    // Validasi duplikat
+    if (activeVouchers.some(active => active.code.toUpperCase() === v.code.toUpperCase())) {
+      setVoucherError("Voucher ini sudah diterapkan.");
+      return;
+    }
+
+    // Validasi maksimal 2 voucher
+    if (activeVouchers.length >= 2) {
+      setVoucherError("Maksimal hanya 2 voucher yang dapat digunakan.");
+      return;
+    }
+
+    // Validasi syarat minimum belanja
+    const minPurchase = v.minPurchase || 0;
+    if (totalBelanjaProduk < minPurchase) {
+      setVoucherError(`Minimal belanja Rp ${minPurchase.toLocaleString('id-ID')} untuk menggunakan voucher ini.`);
+      return;
+    }
+
+    // Validasi apakah voucher sudah pernah digunakan oleh user ini sebelumnya
+    const hasUsedVoucher = orders.some(order => {
+      // Format baru (array vouchers)
+      if (order.vouchers && order.vouchers.includes(v.code)) return true;
+      // Format lama (object voucher tunggal)
+      if (order.voucher && order.voucher.code && order.voucher.code.includes(v.code)) return true;
+      return false;
+    });
+
+    if (hasUsedVoucher) {
+      setVoucherError("Voucher ini sudah pernah Anda gunakan di pesanan sebelumnya.");
+      return;
+    }
+
+    setActiveVouchers(prev => [...prev, v]);
+    setVoucherCode("");
+  };
+
+  const removeVoucher = (codeToRemove) => {
+    setActiveVouchers(prev => prev.filter(v => v.code !== codeToRemove));
   };
 
   const handlePlaceOrder = () => {
@@ -184,14 +252,24 @@ const CheckoutPage = () => {
       items: checkoutItems,
       totalAsli,
       totalDiskon,
-      voucher: activeVoucher ? { code: activeVoucher.code, discount: voucherDiscount } : null,
-      ongkir,
+      // Menyimpan detail diskon untuk riwayat pesanan (kompatibilitas dengan PesananSayaPage)
+      vouchers: activeVouchers.length > 0 ? activeVouchers.map(v => v.code) : null,
+      productDiscount,
+      shippingDiscount,
+      voucher: activeVouchers.length > 0 ? { code: activeVouchers.map(v=>v.code).join(", "), discount: productDiscount + shippingDiscount } : null,
+      ongkir: baseOngkir,
       totalHarga: grandTotal,
       shippingCity,
       shippingAddress,
       shippingPhone,
       // TAMBAHAN: Menyisipkan pesan kartu ucapan ke dalam struktur pesanan agar tersimpan di database lokal
-      greetingMessage: greetingMessage.trim() !== "" ? greetingMessage : null,
+      greetingMessage: greetingMessage.trim() !== "" || greetingFrom.trim() !== "" || greetingTo.trim() !== "" 
+      ? {
+          pesan: greetingMessage.trim(),
+          dari: greetingFrom.trim(),
+          untuk: greetingTo.trim()
+        } 
+      : null,
       paymentMethod: paymentMethod === "COD (Bayar di Tempat)" ? paymentMethod : `${paymentMethod} - ${paymentSubMethod}`,
       status: "Menunggu Konfirmasi"
     };
@@ -209,7 +287,10 @@ const CheckoutPage = () => {
       });
     }
 
-    removeSelectedFromCart();
+    if (!buyNowItem) {
+      removeSelectedFromCart();
+    }
+    
     setShowAlert(true);
   };
 
@@ -363,6 +444,31 @@ const CheckoutPage = () => {
             <div>
               {/* Panduan untuk pelanggan */}
               <p className="text-xs text-pink-500 mb-3">Tulis pesan manis yang ingin disematkan pada kartu ucapan untuk penerima. Kosongkan jika tidak perlu.</p>
+              
+              <div className="flex gap-3 mb-3">
+                <div className="flex-1">
+                  <label className="block text-[10px] font-bold text-pink-700 uppercase tracking-wide mb-1">Dari</label>
+                  <input 
+                    type="text" 
+                    value={greetingFrom}
+                    onChange={(e) => setGreetingFrom(e.target.value)}
+                    placeholder="Nama Pengirim"
+                    className="w-full p-2 text-sm border border-pink-200 rounded-xl bg-pink-50/30 focus:outline-none focus:ring-2 focus:ring-pink-400 transition" 
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-[10px] font-bold text-pink-700 uppercase tracking-wide mb-1">Untuk</label>
+                  <input 
+                    type="text" 
+                    value={greetingTo}
+                    onChange={(e) => setGreetingTo(e.target.value)}
+                    placeholder="Nama Penerima"
+                    className="w-full p-2 text-sm border border-pink-200 rounded-xl bg-pink-50/30 focus:outline-none focus:ring-2 focus:ring-pink-400 transition" 
+                  />
+                </div>
+              </div>
+
+              <label className="block text-[10px] font-bold text-pink-700 uppercase tracking-wide mb-1">Pesan</label>
               <textarea 
                 // Mengaitkan value dengan state greetingMessage
                 value={greetingMessage}
@@ -459,10 +565,55 @@ const CheckoutPage = () => {
               </button>
             </div>
             {voucherError && <p className="text-xs text-red-500 mt-2 ml-1">{voucherError}</p>}
-            {activeVoucher && (
-              <div className="mt-3 bg-emerald-50 text-emerald-600 p-3 rounded-xl border border-emerald-100 text-sm flex items-center gap-2">
-                <CheckCircle2 size={16} />
-                <span>Berhasil memakai voucher <b>{activeVoucher.code}</b>! Diskon {activeVoucher.type === 'percent' ? `${activeVoucher.value}%` : `Rp ${activeVoucher.value.toLocaleString('id-ID')}`} telah diterapkan.</span>
+            
+            {/* Voucher Tersedia */}
+            {vouchers && vouchers.filter(v => v.isActive).length > 0 && (
+              <div className="mt-4 border-t border-pink-100 pt-3">
+                <p className="text-[11px] text-pink-600 font-bold mb-2 uppercase tracking-wide">Voucher Tersedia</p>
+                <div className="flex flex-wrap gap-2">
+                  {vouchers.filter(v => v.isActive).map(v => {
+                    const isUsed = orders.some(order => {
+                      if (order.vouchers && order.vouchers.includes(v.code)) return true;
+                      if (order.voucher && order.voucher.code && order.voucher.code.includes(v.code)) return true;
+                      return false;
+                    });
+                    
+                    return (
+                      <button
+                        key={v.id}
+                        disabled={isUsed}
+                        onClick={() => {
+                          setVoucherCode(v.code);
+                          setVoucherError("");
+                        }}
+                        className={`px-3 py-1.5 border rounded-lg text-[11px] font-bold flex items-center gap-1.5 shadow-sm transition-all ${
+                          isUsed 
+                            ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-70' 
+                            : 'bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100 hover:border-pink-300 cursor-pointer active:scale-95'
+                        }`}
+                        title={isUsed ? "Voucher sudah digunakan di pesanan sebelumnya" : ""}
+                      >
+                        <Tag size={12} className={isUsed ? "text-gray-400" : "text-pink-500"} />
+                        {v.code} ({v.type === 'percent' ? `Diskon ${v.value}%` : `Potongan Rp ${v.value.toLocaleString('id-ID')}`})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {activeVouchers.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {activeVouchers.map(v => (
+                  <div key={v.code} className="bg-emerald-50 text-emerald-600 p-3 rounded-xl border border-emerald-100 text-sm flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 size={16} className="shrink-0" />
+                      <span>Berhasil memakai voucher <b>{v.code}</b> ({v.category === 'ongkir' ? 'Ongkir' : 'Produk'})</span>
+                    </div>
+                    <button onClick={() => removeVoucher(v.code)} className="text-emerald-400 hover:text-emerald-700 font-bold px-2 cursor-pointer transition">
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -476,6 +627,24 @@ const CheckoutPage = () => {
               Rincian Pembayaran
             </h3>
             
+            {/* Daftar Produk yang Dibeli */}
+            <div className="space-y-3 mb-5 border-b border-pink-50 pb-5">
+              {checkoutItems.map((item, index) => (
+                <div key={`${item.id}-${index}`} className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-pink-100">
+                    <img src={item.gambarProduk} alt={item.namaProduk} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-800 truncate">{item.namaProduk}</p>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs text-gray-500">{item.qty}x</span>
+                      <span className="text-sm font-bold text-pink-600">Rp {(item.harga * item.qty).toLocaleString("id-ID")}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
             <div className="space-y-3 text-sm mb-6">
               <div className="flex justify-between text-gray-600">
                 <span>Total Harga ({checkoutItems.reduce((acc, item) => acc + item.qty, 0)} barang)</span>
@@ -487,16 +656,22 @@ const CheckoutPage = () => {
                   <span className="font-semibold">- Rp {totalDiskon.toLocaleString("id-ID")}</span>
                 </div>
               )}
-              {voucherDiscount > 0 && (
+              {productDiscount > 0 && (
                 <div className="flex justify-between text-emerald-500">
-                  <span>Diskon Voucher ({activeVoucher.code})</span>
-                  <span className="font-semibold">- Rp {voucherDiscount.toLocaleString("id-ID")}</span>
+                  <span>Diskon Voucher Produk</span>
+                  <span className="font-semibold">- Rp {productDiscount.toLocaleString("id-ID")}</span>
                 </div>
               )}
               <div className="flex justify-between text-gray-600">
                 <span>Ongkos Kirim {shippingCity && `(${shippingCity})`}</span>
-                <span className="font-semibold text-gray-800">{ongkir === 0 ? "Pilih Kota" : `Rp ${ongkir.toLocaleString("id-ID")}`}</span>
+                <span className="font-semibold text-gray-800">{baseOngkir === 0 ? "Pilih Kota" : `Rp ${baseOngkir.toLocaleString("id-ID")}`}</span>
               </div>
+              {shippingDiscount > 0 && (
+                <div className="flex justify-between text-emerald-500">
+                  <span>Diskon Voucher Ongkir</span>
+                  <span className="font-semibold">- Rp {shippingDiscount.toLocaleString("id-ID")}</span>
+                </div>
+              )}
             </div>
 
             <div className="border-t border-pink-100 pt-4 mb-6">

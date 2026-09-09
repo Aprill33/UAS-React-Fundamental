@@ -8,7 +8,7 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import logo2 from "../../assets/logo2.png";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, User, Lock } from "lucide-react";
 import CustomAlert from "../../Components/CustomAlert";
 
 const Register = () => {
@@ -22,6 +22,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = (e) => {
+    // [DI LUAR MODUL] preventDefault: Mencegah aksi bawaan browser (misal form submit page reload).
     e.preventDefault();
     setErrorMessage("");
 
@@ -119,20 +120,28 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="space-y-3.5" noValidate>
             <div>
               <label className="block text-[10px] font-bold text-pink-800 uppercase tracking-wider mb-1">Username</label>
-              <input
-                type="text"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                required
-                minLength={3}
-                maxLength={20}
-                placeholder="Pilih username (Maks 20 karakter)"
-                className="w-full px-3 py-2 text-sm rounded-lg border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-pink-50/30 hover:bg-white shadow-sm transition-all"
-              />
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-400">
+                  <User size={16} />
+                </div>
+                <input
+                  type="text"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  required
+                  minLength={3}
+                  maxLength={20}
+                  placeholder="Pilih username (Maks 20 karakter)"
+                  className="w-full pl-10 pr-3 py-2 text-sm rounded-lg border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-pink-50/30 hover:bg-white shadow-sm transition-all"
+                />
+              </div>
             </div>
             <div>
               <label className="block text-[10px] font-bold text-pink-800 uppercase tracking-wider mb-1">Password</label>
               <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-400">
+                  <Lock size={16} />
+                </div>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
@@ -141,7 +150,7 @@ const Register = () => {
                   minLength={6}
                   maxLength={20}
                   placeholder="•••••••• (6-20 karakter)"
-                  className="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-pink-50/30 hover:bg-white shadow-sm transition-all"
+                  className="w-full pl-10 pr-10 py-2 text-sm rounded-lg border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-pink-50/30 hover:bg-white shadow-sm transition-all"
                 />
                 <button
                   type="button"
@@ -155,6 +164,9 @@ const Register = () => {
             <div>
               <label className="block text-[10px] font-bold text-pink-800 uppercase tracking-wider mb-1">Konfirmasi Password</label>
               <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-pink-400">
+                  <Lock size={16} />
+                </div>
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={formData.confirmPassword}
@@ -163,7 +175,7 @@ const Register = () => {
                   minLength={6}
                   maxLength={20}
                   placeholder="•••••••• (6-20 karakter)"
-                  className="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-pink-50/30 hover:bg-white shadow-sm transition-all"
+                  className="w-full pl-10 pr-10 py-2 text-sm rounded-lg border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-pink-50/30 hover:bg-white shadow-sm transition-all"
                 />
                 <button
                   type="button"

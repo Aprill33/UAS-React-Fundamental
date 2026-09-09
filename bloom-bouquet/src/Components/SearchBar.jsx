@@ -6,6 +6,7 @@
 
 import { Search } from "lucide-react";
 import { kategoriList, jenisList, statusList } from "../Data/Flowers";
+import CustomDropdown from "./CustomDropdown";
 
 const SearchBar = ({
   searchTerm,
@@ -36,7 +37,7 @@ const SearchBar = ({
 
       {/* Kategori Filter */}
       <div>
-        <p className="text-xs font-semibold text-pink-400 mb-2 uppercase tracking-wide">Kategori Rangkaian</p>
+        <p className="text-[10px] sm:text-xs font-semibold text-pink-400 mb-2 uppercase tracking-wide">Kategori Rangkaian</p>
         <div className="flex flex-wrap gap-2">
           {kategoriList.map((kat) => (
             <button
@@ -58,44 +59,39 @@ const SearchBar = ({
       {/* Filter Dropdown & Sorting */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="flex items-center gap-2">
-          <p className="text-xs font-semibold text-pink-400 uppercase tracking-wide shrink-0">Jenis</p>
-          <select
-            value={selectedJenis}
-            onChange={(e) => setSelectedJenis(e.target.value)}
-            className="w-full text-xs sm:text-sm px-3 py-2 rounded-full border border-pink-200 bg-pink-50/50 text-pink-700 focus:outline-none"
-          >
-            {jenisList.map((j) => (
-              <option key={j} value={j}>{j}</option>
-            ))}
-          </select>
+          <p className="text-[10px] sm:text-xs font-semibold text-pink-400 uppercase tracking-wide shrink-0">Jenis</p>
+          <CustomDropdown 
+            value={selectedJenis} 
+            onChange={setSelectedJenis} 
+            options={jenisList}
+            className="w-full"
+          />
         </div>
 
         <div className="flex items-center gap-2">
-          <p className="text-xs font-semibold text-pink-400 uppercase tracking-wide shrink-0">Status</p>
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full text-xs sm:text-sm px-3 py-2 rounded-full border border-pink-200 bg-pink-50/50 text-pink-700 focus:outline-none"
-          >
-            {statusList.map((st) => (
-              <option key={st} value={st}>{st}</option>
-            ))}
-          </select>
+          <p className="text-[10px] sm:text-xs font-semibold text-pink-400 uppercase tracking-wide shrink-0">Status</p>
+          <CustomDropdown 
+            value={selectedStatus} 
+            onChange={setSelectedStatus} 
+            options={statusList}
+            className="w-full"
+          />
         </div>
 
         <div className="flex items-center gap-2">
-          <p className="text-xs font-semibold text-pink-400 uppercase tracking-wide shrink-0">Urutkan</p>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="w-full text-xs sm:text-sm px-3 py-2 rounded-full border border-pink-200 bg-pink-100/60 text-pink-700 font-medium focus:outline-none"
-          >
-            <option value="default">Default</option>
-            <option value="az">Nama (A - Z)</option>
-            <option value="za">Nama (Z - A)</option>
-            <option value="low-high">Harga: Termurah</option>
-            <option value="high-low">Harga: Termahal</option>
-          </select>
+          <p className="text-[10px] sm:text-xs font-semibold text-pink-400 uppercase tracking-wide shrink-0">Urutkan</p>
+          <CustomDropdown 
+            value={sortBy} 
+            onChange={setSortBy} 
+            options={[
+              { value: "default", label: "Default" },
+              { value: "az", label: "Nama (A - Z)" },
+              { value: "za", label: "Nama (Z - A)" },
+              { value: "low-high", label: "Harga: Termurah" },
+              { value: "high-low", label: "Harga: Termahal" }
+            ]}
+            className="w-full"
+          />
         </div>
       </div>
     </div>

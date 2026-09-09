@@ -23,6 +23,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
+    // [DI LUAR MODUL] preventDefault: Mencegah aksi bawaan browser (misal form submit page reload).
     e.preventDefault();
     setErrorMsg("");
 
@@ -33,14 +34,40 @@ const Login = () => {
     }
 
     // Baca status pending SEBELUM login mengubah state Auth
+    // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
     const hasPendingBouquet = !!sessionStorage.getItem("pendingBouquet");
+    // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
+    const pendingCheckoutItem = sessionStorage.getItem("pendingCheckout");
 
     const res = login(username, password);
     if (res.success) {
       if (res.role === "admin") {
         navigate("/admin");
       } else {
-        if (hasPendingBouquet) {
+        if (pendingCheckoutItem) {
+          try {
+            // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
+            const produk = JSON.parse(pendingCheckoutItem);
+            // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
+            sessionStorage.removeItem("pendingCheckout");
+            navigate("/checkout", { 
+              state: { 
+                buyNowItem: {
+                  id: produk.id,
+                  namaProduk: produk.namaProduk,
+                  harga: produk.diskon ? produk.harga - (produk.harga * produk.diskon / 100) : produk.harga,
+                  gambarProduk: produk.gambarProduk,
+                  kategori: produk.kategori,
+                  jenis: produk.jenis,
+                  diskon: produk.diskon,
+                  qty: 1
+                }
+              } 
+            });
+          } catch(e) {
+            navigate("/");
+          }
+        } else if (hasPendingBouquet) {
           navigate("/keranjang");
         } else {
           navigate("/", { state: { showWelcome: true, username: username } });

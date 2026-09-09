@@ -1,7 +1,14 @@
+/**
+ * FILE: /src/Pages/Admin/PengaturanRangkaiAdminPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
 import { useState, useContext } from "react";
 import { CustomBouquetContext } from "../../context/CustomBouquetContext";
-import { ArrowLeft, Sparkles, Plus, Edit2, Check, X, Palette, DollarSign, Package } from "lucide-react";
+import { ArrowLeft, Sparkles, Plus, Edit2, Check, X, Palette, DollarSign, Package, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import CustomDropdown from "../../Components/CustomDropdown";
 
 const PengaturanRangkaiAdminPage = () => {
   const navigate = useNavigate();
@@ -88,7 +95,7 @@ const PengaturanRangkaiAdminPage = () => {
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
       <button 
-        onClick={() => navigate(-1)} 
+        onClick={() => navigate("/admin")}
         className="flex items-center gap-2 text-pink-600 hover:text-pink-700 bg-white px-4 py-2 rounded-full border border-pink-200 shadow-sm transition hover:shadow-md cursor-pointer w-fit mt-2"
       >
         <ArrowLeft size={16} /> Kembali
@@ -216,23 +223,26 @@ const PengaturanRangkaiAdminPage = () => {
               <h4 className="font-bold text-pink-800 mb-4 text-sm">Tambahkan Varian Bunga Baru</h4>
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-pink-600 block mb-1">Nama Varian (Contoh: Mawar Hitam)</label>
+                  <label className="text-[10px] sm:text-xs font-bold text-pink-600 block mb-1">Nama Varian (Contoh: Mawar Hitam)</label>
                   <input type="text" value={newFlowerData.nama} onChange={(e) => setNewFlowerData({...newFlowerData, nama: e.target.value})} className="w-full p-2 border border-pink-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-pink-600 block mb-1">Kategori / Ikon Bawaan</label>
-                    <select value={newFlowerData.category} onChange={(e) => setNewFlowerData({...newFlowerData, category: e.target.value})} className="w-full p-2 border border-pink-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white">
-                      {flowerCategories.map(c => <option key={c.id} value={c.id}>{c.nama}</option>)}
-                    </select>
+                    <label className="text-[10px] sm:text-xs font-bold text-pink-600 block mb-1">Kategori / Ikon Bawaan</label>
+                    <CustomDropdown 
+                      value={newFlowerData.category} 
+                      onChange={(val) => setNewFlowerData({...newFlowerData, category: val})} 
+                      options={flowerCategories.map(c => ({ value: c.id, label: c.nama }))}
+                      className="w-full"
+                    />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-pink-600 block mb-1">Warna Ikon (Contoh: hitam)</label>
+                    <label className="text-[10px] sm:text-xs font-bold text-pink-600 block mb-1">Warna Ikon (Contoh: hitam)</label>
                     <input type="text" value={newFlowerData.iconColor} onChange={(e) => setNewFlowerData({...newFlowerData, iconColor: e.target.value})} placeholder="merah, biru..." className="w-full p-2 border border-pink-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white" />
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-pink-600 block mb-1">Harga Per Tangkai</label>
+                  <label className="text-[10px] sm:text-xs font-bold text-pink-600 block mb-1">Harga Per Tangkai</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-pink-400">Rp</span>
                     <input type="number" value={newFlowerData.harga} onChange={(e) => setNewFlowerData({...newFlowerData, harga: e.target.value})} className="w-full pl-9 p-2 border border-pink-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white" />

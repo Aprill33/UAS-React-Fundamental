@@ -7,86 +7,19 @@
  *  - Terhubung dengan `ProductDetailModal` untuk popup detail produk.
  */
 
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useEffect, useContext, Fragment } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import ProductDetailModal from "../../Components/ProductDetailModal";
 import CustomAlert from "../../Components/CustomAlert";
 import { FavoriteContext } from "../../context/FavoriteContext";
-import Pagination from "../../Components/Pagination";
+import ProductCard from "../../Components/ProductCard";
+import usePagination from "../../hooks/usePagination";
 import SearchBar from "../../Components/SearchBar";
-import { Heart, Eye, Sparkles, ArrowLeft } from "lucide-react"; 
+import Pagination from "../../Components/Pagination";
+import { Sparkles, ArrowLeft } from "lucide-react";
 import { flowers } from "../../Data/Flowers";
-
-const ProductCard = ({ prod, setSelectedProduct, handleToggleWishlist, currentUser, wishlist }) => (
-  <div 
-    onClick={() => setSelectedProduct(prod)}
-    className="bg-white rounded-3xl border border-pink-100 overflow-hidden shadow-xs hover:shadow-md transition duration-300 flex flex-col justify-between cursor-pointer group p-3"
-  >
-    <div className="relative h-56 overflow-hidden rounded-2xl bg-pink-50/20">
-      <img
-        src={prod.gambarProduk}
-        alt={prod.namaProduk}
-        className={`w-full h-full object-cover group-hover:scale-105 transition duration-500 ${prod.stok === 0 ? "grayscale opacity-75" : ""}`}
-      />
-      {prod.stok === 0 ? (
-        <span className="absolute top-3 left-3 bg-gray-500 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
-          Habis Terjual
-        </span>
-      ) : prod.statusProduk === "Diskon" && prod.diskon ? (
-        <span className="absolute top-3 left-3 bg-pink-100 text-pink-600 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
-          Diskon {prod.diskon}%
-        </span>
-      ) : prod.statusProduk ? (
-        <span className="absolute top-3 left-3 bg-pink-100 text-pink-600 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
-          {prod.statusProduk}
-        </span>
-      ) : null}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleToggleWishlist(prod.id);
-        }}
-        className="absolute top-3 right-3 bg-white/90 hover:bg-white text-pink-500 p-2 rounded-full shadow-sm transition hover:scale-110 cursor-pointer"
-      >
-        <Heart size={16} fill={currentUser && wishlist.includes(prod.id) ? "#f8619c" : "none"} />
-      </button>
-    </div>
-
-    <div className="pt-3 px-1 pb-1 space-y-1.5">
-      <span className="text-[11px] font-bold text-pink-400 uppercase tracking-wide block">
-        {prod.kategori} • <span className="text-pink-600">{prod.jenis}</span>
-      </span>
-      <h3 className="font-serif font-bold text-pink-900 text-base leading-snug line-clamp-1">
-        {prod.namaProduk}
-      </h3>
-      <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
-        <span className="flex items-center gap-1 text-amber-400 font-bold">
-          ★ {prod.rating || "4.8"}
-        </span>
-        <span>•</span>
-        <span>Stok {prod.stok ?? "10"}</span>
-      </div>
-      {prod.diskon ? (
-        <div className="pt-0.5 flex items-baseline gap-2">
-          <span className="text-lg font-bold text-pink-600">Rp {Number(prod.harga - (prod.harga * prod.diskon / 100)).toLocaleString("id-ID")}</span>
-          <span className="text-xs text-gray-400 line-through">Rp {Number(prod.harga).toLocaleString("id-ID")}</span>
-        </div>
-      ) : (
-        <div className="text-lg font-bold text-pink-600 pt-0.5">
-          Rp {Number(prod.harga).toLocaleString("id-ID")}
-        </div>
-      )}
-      <button 
-        onClick={() => setSelectedProduct(prod)}
-        className="w-full mt-2 py-2 bg-pink-50/70 hover:bg-pink-100 text-pink-600 font-bold text-xs rounded-full transition flex items-center justify-center gap-1.5 cursor-pointer border border-pink-100"
-      >
-        <Eye size={15} />
-        <span>Lihat Detail</span>
-      </button>
-    </div>
-  </div>
-);
 
 const FlowersPage = () => {
   const navigate = useNavigate();
@@ -110,9 +43,7 @@ const FlowersPage = () => {
   const [selectedStatus, setSelectedStatus] = useState(initialStatus);
   const [sortBy, setSortBy] = useState("default");
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
-
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     const param = searchParams.get("status");
     if (param === "terbaru") {
@@ -127,11 +58,13 @@ const FlowersPage = () => {
       setSelectedJenis(jenisParam);
     }
     
+    // [DI LUAR MODUL] window.scrollTo: Memanipulasi browser untuk menggulir halaman ke koordinat tertentu.
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [searchParams]);
 
   const handleToggleWishlist = (prodId) => {
     if (!currentUser) {
+      // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
       sessionStorage.setItem("pendingFavorite", prodId);
       setShowAlert(true);
       return;
@@ -140,7 +73,9 @@ const FlowersPage = () => {
   };
 
   const [allFlowers] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("customFlowersData");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     let parsed = saved ? JSON.parse(saved) : (flowers || []);
     // Sinkronisasi data agar diskon terbaru dari Flowers.js masuk ke data localStorage yang lama
     parsed = parsed.map(item => {
@@ -187,10 +122,7 @@ const FlowersPage = () => {
     return 0;
   });
 
-  const totalPages = Math.ceil(sortedAvailableFlowers.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentFlowers = sortedAvailableFlowers.slice(indexOfFirstItem, indexOfLastItem);
+  const { currentData: currentFlowers, totalPages, currentPage, setCurrentPage } = usePagination(sortedAvailableFlowers, 8);
 
   return (
     <div className="space-y-10 font-sans pb-16 bg-gradient-to-b from-pink-50/30 to-white min-h-screen">
@@ -226,7 +158,7 @@ const FlowersPage = () => {
               <span className="inline-flex items-center gap-1.5 bg-white text-pink-600 text-xs font-bold px-4 py-1.5 rounded-full border border-pink-200 shadow-xs">
                 <Sparkles size={14} /> Katalog Lengkap Bloom & Bouquet
               </span>
-              <h1 className="text-4xl sm:text-5xl font-cursive font-bold text-pink-700">
+              <h1 className="text-3xl sm:text-5xl font-cursive font-bold text-pink-700 leading-tight">
                 Jelajahi Semua Koleksi Bunga
               </h1>
               <p className="text-xs sm:text-sm text-pink-500 max-w-xl mx-auto">
@@ -269,15 +201,14 @@ const FlowersPage = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
             {currentFlowers.map((prod) => (
               <ProductCard 
                 key={prod.id} 
-                prod={prod} 
-                setSelectedProduct={setSelectedProduct} 
-                handleToggleWishlist={handleToggleWishlist} 
-                currentUser={currentUser} 
-                wishlist={wishlist} 
+                produk={prod} 
+                onOpenDetail={setSelectedProduct} 
+                onToggleWishlist={handleToggleWishlist} 
+                isWishlisted={currentUser && wishlist.includes(prod.id)} 
               />
             ))}
           </div>
@@ -306,15 +237,14 @@ const FlowersPage = () => {
               <div className="flex-1 h-[1.5px] bg-pink-200" />
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 opacity-80">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 opacity-80">
               {outOfStockFlowers.map((prod) => (
                 <ProductCard 
                   key={prod.id} 
-                  prod={prod} 
-                  setSelectedProduct={setSelectedProduct} 
-                  handleToggleWishlist={handleToggleWishlist} 
-                  currentUser={currentUser} 
-                  wishlist={wishlist} 
+                  produk={prod} 
+                  onOpenDetail={setSelectedProduct} 
+                  onToggleWishlist={handleToggleWishlist} 
+                  isWishlisted={currentUser && wishlist.includes(prod.id)} 
                 />
               ))}
             </div>

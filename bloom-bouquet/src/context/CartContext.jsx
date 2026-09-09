@@ -4,6 +4,7 @@
  * KETERHUBUNGAN: Digunakan oleh komponen `Cart.jsx`, tombol beli di katalog, dan ikon keranjang di `Header.jsx`.
  */
 
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { createContext, useState, useEffect, useContext } from "react";
 import CustomAlert from "../Components/CustomAlert";
 import { AuthContext } from "./AuthContext";
@@ -23,18 +24,24 @@ export const CartProvider = ({ children }) => {
     type: "cart"
   });
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     const currentUsername = currentUser?.username;
     if (currentUsername) {
+      // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
       const saved = localStorage.getItem(`cartItems_${currentUsername}`);
+      // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
       let initialCart = saved ? JSON.parse(saved) : [];
 
+      // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
       const pendingBouquetStr = sessionStorage.getItem("pendingBouquet");
       if (pendingBouquetStr) {
         try {
+          // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
           const pending = JSON.parse(pendingBouquetStr);
           const toAdd = { ...pending, qty: pending.qty || 1 };
           initialCart.push(toAdd);
+          // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
           sessionStorage.removeItem("pendingBouquet");
 
           setCartAlert({
@@ -60,9 +67,12 @@ export const CartProvider = ({ children }) => {
     }
   }, [currentUser?.username]);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     // Hanya simpan jika keranjang sudah selesai dimuat untuk user yang bersangkutan
     if (currentUser && currentUser.username && loadedUser === currentUser.username) {
+      // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
+      // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
       localStorage.setItem(`cartItems_${currentUser.username}`, JSON.stringify(cartItems));
     }
   }, [cartItems, currentUser, loadedUser]);
@@ -203,6 +213,7 @@ export const CartProvider = ({ children }) => {
       value={{
         cartItems,
         selectedItems,
+        setSelectedItems,
         toggleSelection,
         toggleAllSelection,
         removeSelectedFromCart,

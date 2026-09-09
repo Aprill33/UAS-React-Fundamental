@@ -1,8 +1,15 @@
+/**
+ * FILE: /src/Pages/Pelanggan/PesananSayaPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
 import { useContext, useState } from "react";
 import { OrderContext, sendNotification } from "../../context/OrderContext";
 import { ArrowLeft, Package, Truck, CheckCircle2, ShoppingBag, X, XCircle, Clock, Mail } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { ReviewContext } from "../../context/ReviewContext";
 import CustomAlert from "../../Components/CustomAlert";
 
 const OrderDetailModal = ({ order, onClose, onUpdateStatus, currentUser }) => {
@@ -62,7 +69,19 @@ const OrderDetailModal = ({ order, onClose, onUpdateStatus, currentUser }) => {
               <h4 className="font-bold text-amber-700 text-sm mb-2 flex items-center gap-1.5">
                 <Mail size={16} /> Pesan Kartu Ucapan
               </h4>
-              <p className="text-xs text-gray-600 italic leading-relaxed">"{order.greetingMessage}"</p>
+              {typeof order.greetingMessage === 'object' ? (
+                <div className="space-y-1">
+                  {(order.greetingMessage.untuk || order.greetingMessage.dari) && (
+                    <div className="text-xs text-amber-800 font-medium mb-1">
+                      {order.greetingMessage.untuk && <div><span className="font-bold">Untuk:</span> {order.greetingMessage.untuk}</div>}
+                      {order.greetingMessage.dari && <div><span className="font-bold">Dari:</span> {order.greetingMessage.dari}</div>}
+                    </div>
+                  )}
+                  {order.greetingMessage.pesan && <p className="text-xs text-gray-600 italic leading-relaxed">"{order.greetingMessage.pesan}"</p>}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-600 italic leading-relaxed">"{order.greetingMessage}"</p>
+              )}
             </div>
           )}
 
@@ -139,6 +158,7 @@ const OrderDetailModal = ({ order, onClose, onUpdateStatus, currentUser }) => {
 
 const Orders = () => {
   const { orders, updateOrderStatus, cancelOrder } = useContext(OrderContext);
+  const { getReviewByOrderId } = useContext(ReviewContext);
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Menunggu Konfirmasi");
@@ -193,7 +213,7 @@ const Orders = () => {
       />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8 mb-6">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/profil")}
           className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-pink-500 hover:text-white text-pink-600 font-bold text-xs rounded-full shadow-sm border border-pink-200 transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-x-1"
         >
           <ArrowLeft size={16} />
@@ -201,32 +221,42 @@ const Orders = () => {
         </button>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-8 text-center space-y-2">
-        <h1 className="text-3xl sm:text-4xl font-cursive font-bold text-pink-700">Pesanan Saya</h1>
-        <p className="text-xs sm:text-sm text-pink-500">Pantau status pengiriman buket bungamu di sini</p>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-8">
+        <div className="flex items-center justify-center gap-2 sm:gap-4">
+          <div className="w-10 sm:flex-1 h-[2px] bg-pink-300 rounded-full shrink-0" />
+          <div className="text-center px-4 space-y-2">
+            <h1 className="text-3xl sm:text-4xl font-cursive font-bold text-pink-700">Pesanan Saya</h1>
+            <p className="text-xs sm:text-sm text-pink-500">Pantau status pengiriman buket bungamu di sini</p>
+          </div>
+          <div className="w-10 sm:flex-1 h-[2px] bg-pink-300 rounded-full shrink-0" />
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-8">
         {/* TABS */}
-        <div className="flex bg-white rounded-full p-1.5 shadow-sm border border-pink-100 max-w-lg mx-auto">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-pink-500 text-white shadow-md"
-                    : "text-gray-500 hover:bg-pink-50 hover:text-pink-600"
-                }`}
-              >
-                <Icon size={16} />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
+        <div className="flex bg-white sm:rounded-full p-1.5 shadow-sm border border-pink-100 max-w-3xl mx-auto overflow-x-auto sm:overflow-visible rounded-xl">
+          <div className="flex w-full min-w-max sm:min-w-0">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-0 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                    isActive
+                      ? "bg-pink-500 text-white shadow-md"
+                      : "text-gray-500 hover:bg-pink-50 hover:text-pink-600"
+                  }`}
+                >
+                  <Icon size={16} className="shrink-0" />
+                  <span className={`${isActive ? "inline" : "hidden sm:inline"} whitespace-nowrap`}>
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -313,6 +343,18 @@ const Orders = () => {
                     >
                       Lihat Detail
                     </button>
+                    {order.status === "Selesai" && (
+                      <button
+                        onClick={() => navigate(`/pesanan/ulasan/${order.id}`)}
+                        className={`flex-1 sm:flex-none px-5 py-2.5 rounded-full font-bold text-xs transition cursor-pointer shrink-0 ${
+                          getReviewByOrderId(order.id) 
+                          ? "bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white" 
+                          : "bg-pink-500 text-white hover:bg-pink-600 shadow-md shadow-pink-200"
+                        }`}
+                      >
+                        {getReviewByOrderId(order.id) ? "Edit Ulasan" : "Beri Ulasan"}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,9 +1,15 @@
+/**
+ * FILE: /src/Pages/Pelanggan/KeranjangPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
 import { useContext, useState } from "react";
 import { CartContext } from "../../context/CartContext";
 import { OrderContext } from "../../context/OrderContext";
 import { Link, useNavigate } from "react-router-dom";
 import { 
-  ShoppingBag, 
+  ShoppingCart, 
   Trash2, 
   Plus, 
   Minus, 
@@ -35,6 +41,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const [showCheckoutAlert, setShowCheckoutAlert] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
   const handleCheckout = () => {
     if (cartItems.length === 0 || selectedItems.length === 0) return;
@@ -43,6 +50,14 @@ const Cart = () => {
 
   const handleClearCart = () => {
     setShowClearConfirm(true);
+  };
+
+  const handleDecrease = (item) => {
+    if (item.qty === 1) {
+      setItemToDelete(item);
+    } else {
+      updateQty(item.id, -1);
+    }
   };
 
   // Jika keranjang kosong
@@ -59,7 +74,7 @@ const Cart = () => {
 
         <div className="max-w-md mx-auto text-center space-y-6 animate-in zoom-in-95 duration-500">
           <div className="w-32 h-32 bg-pink-100 rounded-full flex items-center justify-center mx-auto shadow-inner border border-pink-200">
-            <ShoppingBag size={56} className="text-pink-400 opacity-80" />
+            <ShoppingCart size={56} className="text-pink-400 opacity-80" />
           </div>
           
           <div className="space-y-2">
@@ -112,6 +127,20 @@ const Cart = () => {
         showCancel={true}
       />
 
+      <CustomAlert
+        isOpen={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={() => {
+          if (itemToDelete) removeFromCart(itemToDelete.id);
+          setItemToDelete(null);
+        }}
+        type="delete_confirm"
+        title="Hapus dari Keranjang?"
+        message={`Apakah Anda yakin ingin menghapus "${itemToDelete?.namaProduk}" dari keranjang?`}
+        confirmText="Ya, Hapus"
+        showCancel={true}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 mb-6">
         <button
           onClick={() => navigate("/bunga")}
@@ -140,7 +169,7 @@ const Cart = () => {
           <div className="bg-white rounded-3xl p-6 border border-pink-100 shadow-sm">
             <div className="flex items-center justify-between border-b border-pink-100 pb-4 mb-4">
               <h2 className="font-bold text-pink-800 text-lg flex items-center gap-2">
-                <ShoppingBag size={20} className="text-pink-500" />
+                <ShoppingCart size={20} className="text-pink-500" />
                 Daftar Pesanan ({cartItems.length})
               </h2>
               <button 
@@ -206,7 +235,7 @@ const Cart = () => {
                   <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-6 sm:gap-4 mt-2 sm:mt-0">
                     <div className="flex items-center bg-white border border-pink-200 rounded-full p-1 shadow-xs">
                       <button
-                        onClick={() => updateQty(item.id, -1)}
+                        onClick={() => handleDecrease(item)}
                         className="w-7 h-7 rounded-full bg-pink-50 text-pink-600 hover:bg-pink-500 hover:text-white flex items-center justify-center transition cursor-pointer"
                       >
                         <Minus size={14} />
@@ -230,7 +259,7 @@ const Cart = () => {
                     </div>
 
                     <button
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => setItemToDelete(item)}
                       className="p-2 text-pink-300 hover:text-red-500 hover:bg-red-50 rounded-full transition cursor-pointer absolute top-2 right-2 sm:static sm:top-auto sm:right-auto"
                       title="Hapus"
                     >

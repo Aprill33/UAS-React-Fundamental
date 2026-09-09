@@ -1,3 +1,10 @@
+/**
+ * FILE: /src/context/CustomBouquetContext.jsx
+ * TUJUAN: Context API untuk menyediakan state global (Global State Management).
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { createContext, useState, useEffect } from "react";
 import {
   RoseAnimated,
@@ -70,31 +77,46 @@ export const CustomBouquetProvider = ({ children }) => {
   // --- STATES ---
   // Inisialisasi state dengan mencoba mengambil dari localStorage, jika tidak ada gunakan default
   const [wrappingOptions, setWrappingOptions] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("admin_wrappingOptions");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     return saved ? JSON.parse(saved) : defaultWrappingOptions;
   });
 
   const [flowerCategories, setFlowerCategories] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("admin_flowerCategories");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     return saved ? JSON.parse(saved) : defaultFlowerCategories;
   });
 
   const [flowerOptions, setFlowerOptions] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("admin_flowerOptions");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     return saved ? JSON.parse(saved) : defaultFlowerOptions;
   });
 
   // --- EFFECTS ---
   // Otomatis simpan ke localStorage setiap ada perubahan pada state
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
+    // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
     localStorage.setItem("admin_wrappingOptions", JSON.stringify(wrappingOptions));
   }, [wrappingOptions]);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
+    // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
     localStorage.setItem("admin_flowerCategories", JSON.stringify(flowerCategories));
   }, [flowerCategories]);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
+    // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
     localStorage.setItem("admin_flowerOptions", JSON.stringify(flowerOptions));
   }, [flowerOptions]);
 

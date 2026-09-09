@@ -7,6 +7,7 @@
  *  - Membuka modal `ProductDetailModal.jsx` saat detail produk diklik.
  */
 
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -27,6 +28,8 @@ import {
   Eye,
   Grid
 } from "lucide-react";
+import { ShoppingBag, Star, Package, Clock, Quote } from "lucide-react";
+import ReviewCarousel from "../../Components/ReviewCarousel";
 
 import { flowers, heroSlides, exploreFlowersList } from "../../Data/Flowers";
 
@@ -56,6 +59,7 @@ const Home = () => {
   const [showBuilderAlert, setShowBuilderAlert] = useState(false);
 
   // Efek untuk mengganti slide hero otomatis setiap 5 detik
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -64,6 +68,7 @@ const Home = () => {
   }, []);
 
   // Efek untuk menampilkan ucapan selamat datang dari login
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     if (location.state?.showWelcome) {
       setWelcomeName(location.state.username);
@@ -75,6 +80,7 @@ const Home = () => {
 
   const handleToggleWishlist = (prodId) => {
     if (!currentUser) {
+      // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
       sessionStorage.setItem("pendingFavorite", prodId);
       setShowHomeAlert(true);
       return;
@@ -83,15 +89,13 @@ const Home = () => {
   };
 
   const handleBuilderClick = () => {
-    if (!currentUser) {
-      setShowBuilderAlert(true);
-    } else {
-      navigate("/rangkai-buket");
-    }
+    navigate("/rangkai-buket");
   };
 
   const [allFlowers] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("customFlowersData");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     let parsed = saved ? JSON.parse(saved) : (flowers || []);
     // Sinkronisasi data agar diskon terbaru dari Flowers.js masuk ke data localStorage yang lama
     parsed = parsed.map(item => {
@@ -227,14 +231,14 @@ const Home = () => {
           <button
             onClick={() => setNewIndex((prev) => Math.max(0, prev - 1))}
             disabled={newIndex === 0}
-            className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white"
+            className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white dark:bg-gray-800"
           >
             <ChevronLeft size={18} />
           </button>
           <button
             onClick={() => setNewIndex((prev) => Math.min(displayNewProducts.length - 4, prev + 1))}
             disabled={newIndex >= displayNewProducts.length - 4}
-            className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white"
+            className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white dark:bg-gray-800"
           >
             <ChevronRight size={18} />
           </button>
@@ -248,7 +252,7 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
           {displayNewProducts.slice(newIndex, newIndex + 4).map((prod) => (
             <div
               key={prod.id}
@@ -270,6 +274,7 @@ const Home = () => {
 
                 <button
                   onClick={(e) => {
+                    // [DI LUAR MODUL] stopPropagation: Mencegah event merambat/bubble ke parent elemen HTML.
                     e.stopPropagation();
                     handleToggleWishlist(prod.id);
                   }}
@@ -319,7 +324,7 @@ const Home = () => {
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="flex-1 h-[1.5px] bg-pink-200" />
             <div className="text-center shrink-0 px-2">
-              <h2 className="text-3xl font-cursive font-bold text-pink-700 mb-1">
+              <h2 className="text-3xl font-cursive font-bold text-pink-700 dark:text-pink-400 mb-1">
                 Produk Diskon Spesial
               </h2>
               <p className="text-xs text-pink-400">Harga miring untuk bunga cantik favoritmu</p>
@@ -331,35 +336,35 @@ const Home = () => {
             <button
               onClick={() => setDiscountIndex((prev) => Math.max(0, prev - 1))}
               disabled={discountIndex === 0}
-              className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white"
+              className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white dark:bg-gray-800"
             >
               <ChevronLeft size={18} />
             </button>
             <button
               onClick={() => setDiscountIndex((prev) => Math.min(discountProducts.length - 4, prev + 1))}
               disabled={discountIndex >= discountProducts.length - 4}
-              className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white"
+              className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white dark:bg-gray-800"
             >
               <ChevronRight size={18} />
             </button>
 
             <Link
               to="/bunga?status=diskon"
-              className="ml-2 flex items-center gap-1.5 px-4 py-2 bg-pink-100 hover:bg-pink-200 text-pink-700 text-xs font-bold rounded-full transition shadow-xs"
+              className="ml-2 flex items-center gap-1.5 px-4 py-2 bg-pink-100 hover:bg-pink-200 text-pink-700 text-xs font-bold rounded-full transition shadow-xs dark:bg-gray-800 dark:text-gray-300"
             >
               <Grid size={14} />
               <span>Lihat Semua</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
             {discountProducts.slice(discountIndex, discountIndex + 4).map((prod) => (
               <div
                 key={prod.id}
                 onClick={() => setSelectedProduct(prod)}
-                className="bg-white rounded-3xl border border-pink-100 overflow-hidden shadow-xs hover:shadow-xl hover:border-pink-300 transition duration-300 flex flex-col justify-between cursor-pointer group p-3"
+                className="bg-white dark:bg-gray-800 rounded-3xl border border-pink-100 dark:border-gray-700 overflow-hidden shadow-xs hover:shadow-xl hover:border-pink-300 transition duration-300 flex flex-col justify-between cursor-pointer group p-3"
               >
-                <div className="relative h-56 overflow-hidden rounded-2xl bg-pink-50/20">
+                <div className="relative h-56 overflow-hidden rounded-2xl bg-pink-50/20 dark:bg-gray-900">
                   <img
                     src={prod.gambarProduk || prod.gambar || prod.img}
                     alt={prod.namaProduk || prod.nama}
@@ -367,21 +372,22 @@ const Home = () => {
                   />
 
                   {prod.statusProduk === "Diskon" && prod.diskon ? (
-                    <span className="absolute top-3 left-3 bg-pink-100 text-pink-600 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
+                    <span className="absolute top-3 left-3 bg-pink-100 dark:bg-pink-900/50 text-pink-600 dark:text-pink-300 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
                       Diskon {prod.diskon}%
                     </span>
                   ) : prod.statusProduk ? (
-                    <span className="absolute top-3 left-3 bg-pink-100 text-pink-600 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
+                    <span className="absolute top-3 left-3 bg-pink-100 dark:bg-pink-900/50 text-pink-600 dark:text-pink-300 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
                       {prod.statusProduk}
                     </span>
                   ) : null}
 
                   <button
                     onClick={(e) => {
+                      // [DI LUAR MODUL] stopPropagation: Mencegah event merambat/bubble ke parent elemen HTML.
                       e.stopPropagation();
                       handleToggleWishlist(prod.id);
                     }}
-                    className="absolute top-3 right-3 bg-white/90 hover:bg-white text-pink-500 p-2 rounded-full shadow-sm transition hover:scale-110 cursor-pointer"
+                    className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 hover:bg-white text-pink-500 p-2 rounded-full shadow-sm transition hover:scale-110 cursor-pointer"
                   >
                     <Heart size={16} fill={currentUser && wishlist.includes(prod.id) ? "#f8619c" : "none"} />
                   </button>
@@ -392,11 +398,11 @@ const Home = () => {
                     {prod.kategori || "MAWAR"}
                   </span>
 
-                  <h3 className="font-serif font-bold text-pink-900 text-base leading-snug line-clamp-1">
+                  <h3 className="font-serif font-bold text-pink-900 dark:text-gray-100 text-base leading-snug line-clamp-1">
                     {prod.namaProduk || prod.nama}
                   </h3>
 
-                  <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+                  <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium">
                     <span className="flex items-center gap-1 text-amber-400 font-bold">
                       ★ {prod.rating || "4.8"}
                     </span>
@@ -406,18 +412,18 @@ const Home = () => {
 
                   {prod.diskon ? (
                     <div className="pt-0.5 flex items-baseline gap-2">
-                      <span className="text-lg font-bold text-pink-600">Rp {Number(prod.harga - (prod.harga * prod.diskon / 100)).toLocaleString("id-ID")}</span>
+                      <span className="text-lg font-bold text-pink-600 dark:text-pink-400">Rp {Number(prod.harga - (prod.harga * prod.diskon / 100)).toLocaleString("id-ID")}</span>
                       <span className="text-xs text-gray-400 line-through">Rp {Number(prod.harga).toLocaleString("id-ID")}</span>
                     </div>
                   ) : (
-                    <div className="text-lg font-bold text-pink-600 pt-0.5">
+                    <div className="text-lg font-bold text-pink-600 dark:text-pink-400 pt-0.5">
                       Rp {Number(prod.harga).toLocaleString("id-ID")}
                     </div>
                   )}
 
                   <button
                     onClick={() => setSelectedProduct(prod)}
-                    className="w-full mt-2 py-2 bg-pink-50/70 hover:bg-pink-100 text-pink-600 font-bold text-xs rounded-full transition flex items-center justify-center gap-1.5 cursor-pointer border border-pink-100"
+                    className="w-full mt-2 py-2 bg-pink-50/70 dark:bg-gray-700 hover:bg-pink-100 text-pink-600 dark:text-pink-300 font-bold text-xs rounded-full transition flex items-center justify-center gap-1.5 cursor-pointer border border-pink-100 dark:border-gray-600"
                   >
                     <Eye size={15} />
                     <span>Lihat Detail</span>
@@ -434,7 +440,7 @@ const Home = () => {
         <div className="flex items-center justify-center gap-4 mb-4">
           <div className="flex-1 h-[1.5px] bg-pink-200" />
           <div className="text-center shrink-0 px-2">
-            <h2 className="text-3xl font-cursive font-bold text-pink-700 mb-1">
+            <h2 className="text-3xl font-cursive font-bold text-pink-700 dark:text-pink-400 mb-1">
               Koleksi Terlaris & Populer
             </h2>
             <p className="text-xs text-pink-400">Favorit terbanyak yang paling disukai pelanggan</p>
@@ -446,35 +452,35 @@ const Home = () => {
           <button
             onClick={() => setBestIndex((prev) => Math.max(0, prev - 1))}
             disabled={bestIndex === 0}
-            className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white"
+            className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white dark:bg-gray-800"
           >
             <ChevronLeft size={18} />
           </button>
           <button
             onClick={() => setBestIndex((prev) => Math.min(displayBestProducts.length - 4, prev + 1))}
             disabled={bestIndex >= displayBestProducts.length - 4}
-            className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white"
+            className="p-2 border border-pink-200 text-pink-600 rounded-full hover:bg-pink-50 disabled:opacity-30 cursor-pointer transition bg-white dark:bg-gray-800"
           >
             <ChevronRight size={18} />
           </button>
 
           <Link
             to="/bunga?status=best-seller"
-            className="ml-2 flex items-center gap-1.5 px-4 py-2 bg-pink-100 hover:bg-pink-200 text-pink-700 text-xs font-bold rounded-full transition shadow-xs"
+            className="ml-2 flex items-center gap-1.5 px-4 py-2 bg-pink-100 hover:bg-pink-200 text-pink-700 text-xs font-bold rounded-full transition shadow-xs dark:bg-gray-800 dark:text-gray-300"
           >
             <Grid size={14} />
             <span>Lihat Semua</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
           {displayBestProducts.slice(bestIndex, bestIndex + 4).map((prod) => (
             <div
               key={prod.id}
               onClick={() => setSelectedProduct(prod)}
-              className="bg-white rounded-3xl border border-pink-100 overflow-hidden shadow-xs hover:shadow-xl hover:border-pink-300 transition duration-300 flex flex-col justify-between cursor-pointer group p-3"
+              className="bg-white dark:bg-gray-800 rounded-3xl border border-pink-100 dark:border-gray-700 overflow-hidden shadow-xs hover:shadow-xl hover:border-pink-300 transition duration-300 flex flex-col justify-between cursor-pointer group p-3"
             >
-              <div className="relative h-56 overflow-hidden rounded-2xl bg-pink-50/20">
+              <div className="relative h-56 overflow-hidden rounded-2xl bg-pink-50/20 dark:bg-gray-900">
                 <img
                   src={prod.gambarProduk || prod.gambar || prod.img}
                   alt={prod.namaProduk || prod.nama}
@@ -482,17 +488,18 @@ const Home = () => {
                 />
 
                 {prod.statusProduk && (
-                  <span className="absolute top-3 left-3 bg-pink-100 text-pink-600 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
+                  <span className="absolute top-3 left-3 bg-pink-100 dark:bg-pink-900/50 text-pink-600 dark:text-pink-300 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
                     {prod.statusProduk}
                   </span>
                 )}
 
                 <button
                   onClick={(e) => {
+                    // [DI LUAR MODUL] stopPropagation: Mencegah event merambat/bubble ke parent elemen HTML.
                     e.stopPropagation();
                     handleToggleWishlist(prod.id);
                   }}
-                  className="absolute top-3 right-3 bg-white/90 hover:bg-white text-pink-500 p-2 rounded-full shadow-sm transition hover:scale-110 cursor-pointer"
+                  className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 hover:bg-white text-pink-500 p-2 rounded-full shadow-sm transition hover:scale-110 cursor-pointer"
                 >
                   <Heart size={16} fill={currentUser && wishlist.includes(prod.id) ? "#f8619c" : "none"} />
                 </button>
@@ -503,11 +510,11 @@ const Home = () => {
                   {prod.kategori || "BUKET"}
                 </span>
 
-                <h3 className="font-serif font-bold text-pink-900 text-base leading-snug line-clamp-1">
+                <h3 className="font-serif font-bold text-pink-900 dark:text-gray-100 text-base leading-snug line-clamp-1">
                   {prod.namaProduk || prod.nama}
                 </h3>
 
-                <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 font-medium">
                   <span className="flex items-center gap-1 text-amber-400 font-bold">
                     ★ {prod.rating || "4.9"}
                   </span>
@@ -515,13 +522,13 @@ const Home = () => {
                   <span>Stok {prod.stok ?? "8"}</span>
                 </div>
 
-                <div className="text-lg font-bold text-pink-600 pt-0.5">
+                <div className="text-lg font-bold text-pink-600 dark:text-pink-400 pt-0.5">
                   Rp {Number(prod.harga).toLocaleString("id-ID")}
                 </div>
 
                 <button
                   onClick={() => setSelectedProduct(prod)}
-                  className="w-full mt-2 py-2 bg-pink-50/70 hover:bg-pink-100 text-pink-600 font-bold text-xs rounded-full transition flex items-center justify-center gap-1.5 cursor-pointer border border-pink-100"
+                  className="w-full mt-2 py-2 bg-pink-50/70 dark:bg-gray-700 hover:bg-pink-100 text-pink-600 dark:text-pink-300 font-bold text-xs rounded-full transition flex items-center justify-center gap-1.5 cursor-pointer border border-pink-100 dark:border-gray-600"
                 >
                   <Eye size={15} />
                   <span>Lihat Detail</span>
@@ -534,25 +541,25 @@ const Home = () => {
 
       {/* 3. SECTION TENTANG KAMI[cite: 2] */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-        <div className="relative bg-pink-100/60 p-6 sm:p-10 rounded-3xl border border-pink-200">
+        <div className="relative bg-pink-100/60 dark:bg-gray-800/50 p-6 sm:p-10 rounded-3xl border border-pink-200 dark:border-gray-700">
 
-          <div className="bg-white rounded-2xl p-6 sm:p-10 shadow-lg border border-pink-100 relative z-10 max-w-5xl mx-auto">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 sm:p-10 shadow-lg border border-pink-100 dark:border-gray-700 relative z-10 max-w-5xl mx-auto">
 
             <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="flex-1 h-[1.5px] bg-pink-300" />
-              <h3 className="font-cursive font-bold text-pink-700 text-2xl sm:text-3xl px-2 text-center">
+              <div className="flex-1 h-[1.5px] bg-pink-300 dark:bg-gray-600" />
+              <h3 className="font-cursive font-bold text-pink-700 dark:text-pink-400 text-xl sm:text-3xl px-2 text-center leading-tight">
                 Tentang Bloom & Bouquet
               </h3>
-              <div className="flex-1 h-[1.5px] bg-pink-300" />
+              <div className="flex-1 h-[1.5px] bg-pink-300 dark:bg-gray-600" />
             </div>
 
-            <div className="space-y-4 text-center text-xs sm:text-sm text-pink-600/90 leading-relaxed font-sans">
+            <div className="space-y-4 text-center text-[10px] sm:text-sm text-pink-600/90 dark:text-gray-300 leading-relaxed font-sans">
               <p>
-                <strong className="text-pink-700 font-bold">Bloom & Bouquet</strong> merupakan studio florist modern di Bandung yang menjual <span className="text-pink-700 font-bold">bunga asli dan segar</span> seperti <span className="text-pink-700 font-bold">bunga mawar, tulip, matahari, lily, anggrek, daisy</span>, dll. Dapatkan rangkaian bunga cantik dan elegan untuk <span className="text-pink-700 font-bold">buket bunga, bunga box, atau bunga meja</span>.
+                <strong className="text-pink-700 dark:text-pink-400 font-bold">Bloom & Bouquet</strong> merupakan studio florist modern di Bandung yang menjual <span className="text-pink-700 dark:text-pink-400 font-bold">bunga asli dan segar</span> seperti <span className="text-pink-700 dark:text-pink-400 font-bold">bunga mawar, tulip, matahari, lily, anggrek, daisy</span>, dll. Dapatkan rangkaian bunga cantik dan elegan untuk <span className="text-pink-700 dark:text-pink-400 font-bold">buket bunga, bunga box, atau bunga meja</span>.
               </p>
 
               <p>
-                Menghubungkan orang-orang melalui keindahan bunga adalah passion bagi kami. Oleh karena itu, kami selalu berusaha menghadirkan layanan terbaik untuk kamu. Ciptakan momen terbaik bersama orang yang spesial dalam hidup kamu, baik itu untuk <span className="text-pink-700 font-bold">pacar, sahabat, maupun keluarga</span>. Demikian pula untuk momen istimewa seperti <span className="text-pink-700 font-bold">wisuda, pernikahan, ulang tahun, hari ibu</span>, dll.
+                Menghubungkan orang-orang melalui keindahan bunga adalah passion bagi kami. Oleh karena itu, kami selalu berusaha menghadirkan layanan terbaik untuk kamu. Ciptakan momen terbaik bersama orang yang spesial dalam hidup kamu, baik itu untuk <span className="text-pink-700 dark:text-pink-400 font-bold">pacar, sahabat, maupun keluarga</span>. Demikian pula untuk momen istimewa seperti <span className="text-pink-700 dark:text-pink-400 font-bold">wisuda, pernikahan, ulang tahun, hari ibu</span>, dll.
               </p>
 
               <p className="pt-2">
@@ -561,11 +568,11 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="hidden lg:block">
-            <img src={aboutus1} alt="Bunga 1" className="absolute -top-6 -left-6 w-28 h-28 object-cover rounded-2xl shadow-md border-2 border-white -rotate-6" />
-            <img src={aboutus2} alt="Bunga 2" className="absolute -bottom-6 -left-6 w-28 h-28 object-cover rounded-2xl shadow-md border-2 border-white -rotate-6" />
-            <img src={aboutus3} alt="Bunga 3" className="absolute -top-6 -right-6 w-28 h-28 object-cover rounded-2xl shadow-md border-2 border-white -rotate-6" />
-            <img src={aboutus4} alt="Bunga 4" className="absolute -bottom-6 -right-6 w-28 h-28 object-cover rounded-2xl shadow-md border-2 border-white -rotate-6" />
+          <div className="block">
+            <img src={aboutus1} alt="Bunga 1" className="absolute -top-3 -left-3 sm:-top-6 sm:-left-6 w-14 h-14 sm:w-28 sm:h-28 object-cover rounded-xl sm:rounded-2xl shadow-md border-2 border-white dark:border-gray-800 -rotate-6" />
+            <img src={aboutus2} alt="Bunga 2" className="absolute -bottom-3 -left-3 sm:-bottom-6 sm:-left-6 w-14 h-14 sm:w-28 sm:h-28 object-cover rounded-xl sm:rounded-2xl shadow-md border-2 border-white dark:border-gray-800 -rotate-6" />
+            <img src={aboutus3} alt="Bunga 3" className="absolute -top-3 -right-3 sm:-top-6 sm:-right-6 w-14 h-14 sm:w-28 sm:h-28 object-cover rounded-xl sm:rounded-2xl shadow-md border-2 border-white dark:border-gray-800 -rotate-6" />
+            <img src={aboutus4} alt="Bunga 4" className="absolute -bottom-3 -right-3 sm:-bottom-6 sm:-right-6 w-14 h-14 sm:w-28 sm:h-28 object-cover rounded-xl sm:rounded-2xl shadow-md border-2 border-white dark:border-gray-800 -rotate-6" />
           </div>
 
         </div>
@@ -573,77 +580,77 @@ const Home = () => {
 
       {/* 4. MENGAPA HARUS CHECKOUT[cite: 2] */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 text-center space-y-8">
-        <div className="flex items-center justify-center gap-4">
-          <div className="flex-1 h-[1.5px] bg-pink-200" />
-          <div className="space-y-1 shrink-0 px-2">
-            <h2 className="text-3xl md:text-4xl font-cursive font-bold text-pink-700">
+        <div className="flex items-center justify-center gap-2 sm:gap-4">
+          <div className="hidden sm:block flex-1 h-[1.5px] bg-pink-200 dark:bg-gray-700" />
+          <div className="space-y-1 px-2 text-center max-w-2xl mx-auto">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-cursive font-bold text-pink-700 dark:text-pink-400 leading-tight">
               Ini Alasan Bloom & Bouquet Selalu Jadi Pilihan Utama
             </h2>
-            <p className="text-xs text-pink-400 max-w-xl mx-auto">
+            <p className="text-[10px] sm:text-xs text-pink-400 dark:text-gray-400">
               Nikmati kemudahan pemesanan kado bunga segar dengan jaminan layanan terbaik.
             </p>
           </div>
-          <div className="flex-1 h-[1.5px] bg-pink-200" />
+          <div className="hidden sm:block flex-1 h-[1.5px] bg-pink-200 dark:bg-gray-700" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-6 bg-white rounded-3xl border border-pink-100 shadow-xs flex flex-col items-center text-center space-y-3">
-            <div className="p-3 bg-pink-100 text-pink-600 rounded-2xl">
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-3xl border border-pink-100 dark:border-gray-700 shadow-xs flex flex-col items-center text-center space-y-3">
+            <div className="p-3 bg-pink-100 dark:bg-gray-700 text-pink-600 dark:text-pink-400 rounded-2xl">
               <Truck size={28} />
             </div>
-            <h3 className="font-bold text-sm text-pink-800">Pengiriman Hari Yang Sama</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
+            <h3 className="font-bold text-sm text-pink-800 dark:text-gray-100">Pengiriman Hari Yang Sama</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               Pesanan sebelum jam 3 sore siap dikirim di hari yang sama langsung ke alamat tujuan.
             </p>
           </div>
 
-          <div className="p-6 bg-white rounded-3xl border border-pink-100 shadow-xs flex flex-col items-center text-center space-y-3">
-            <div className="p-3 bg-pink-100 text-pink-600 rounded-2xl">
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-3xl border border-pink-100 dark:border-gray-700 shadow-xs flex flex-col items-center text-center space-y-3">
+            <div className="p-3 bg-pink-100 dark:bg-gray-700 text-pink-600 dark:text-pink-400 rounded-2xl">
               <ShieldCheck size={28} />
             </div>
-            <h3 className="font-bold text-sm text-pink-800">Garansi Bunga Segar</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
+            <h3 className="font-bold text-sm text-pink-800 dark:text-gray-100">Garansi Bunga Segar</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               Bunga dipastikan segar dan dirangkai rapi sesuai standar kualitas florist profesional.
             </p>
           </div>
 
-          <div className="p-6 bg-white rounded-3xl border border-pink-100 shadow-xs flex flex-col items-center text-center space-y-3">
-            <div className="p-3 bg-pink-100 text-pink-600 rounded-2xl">
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-3xl border border-pink-100 dark:border-gray-700 shadow-xs flex flex-col items-center text-center space-y-3">
+            <div className="p-3 bg-pink-100 dark:bg-gray-700 text-pink-600 dark:text-pink-400 rounded-2xl">
               <Palette size={28} />
             </div>
-            <h3 className="font-bold text-sm text-pink-800">Rangkaian Buket Kustom</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
+            <h3 className="font-bold text-sm text-pink-800 dark:text-gray-100">Rangkaian Buket Kustom</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
               Bebas memilih jenis bunga, warna pembungkus, dan pita sesuai selera unikmu.
             </p>
           </div>
 
-          <div className="p-6 bg-white rounded-3xl border border-pink-100 shadow-xs flex flex-col items-center text-center space-y-3">
-            <div className="p-3 bg-pink-100 text-pink-600 rounded-2xl">
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-3xl border border-pink-100 dark:border-gray-700 shadow-xs flex flex-col items-center text-center space-y-3">
+            <div className="p-3 bg-pink-100 dark:bg-gray-700 text-pink-600 dark:text-pink-400 rounded-2xl">
               <MessageCircle size={28} />
             </div>
-            <h3 className="font-bold text-sm text-pink-800">Konsultasi Gratis</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Tim penata bunga kami siap memberikan rekomendasi pilihan bunga terbaik untuk setiap momen.
+            <h3 className="font-bold text-sm text-pink-800 dark:text-gray-100">Kartu Ucapan Eksklusif</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+              Sisipkan pesan personal dan sampaikan perasaanmu lewat kartu ucapan cantik secara gratis di setiap pesanan.
             </p>
           </div>
         </div>
       </section>
 
       {/* 5. JELAJAHI JENIS BUNGA[cite: 2] */}
-      <section className="bg-pink-50/40 py-12 border-y border-pink-200">
+      <section className="bg-pink-50/40 dark:bg-gray-900 py-12 border-y border-pink-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-8 text-center">
 
-          <div className="flex items-center justify-center gap-4">
-            <div className="flex-1 h-[1.5px] bg-pink-200" />
-            <div className="space-y-1 shrink-0 px-2">
-              <h2 className="text-3xl md:text-4xl font-cursive font-bold text-pink-700">
+          <div className="flex items-center justify-center gap-2 sm:gap-4">
+            <div className="hidden sm:block flex-1 h-[1.5px] bg-pink-200 dark:bg-gray-700" />
+            <div className="space-y-1 px-2 text-center max-w-2xl mx-auto">
+              <h2 className="text-xl sm:text-3xl md:text-4xl font-cursive font-bold text-pink-700 dark:text-pink-400 leading-tight">
                 Jelajahi Jenis Bunga Kami
               </h2>
-              <p className="text-xs text-pink-400">
+              <p className="text-[10px] sm:text-xs text-pink-400 dark:text-gray-400">
                 Pelajari arti, pesan tersembunyi, dan filosofi indah di balik setiap tangkai bunga
               </p>
             </div>
-            <div className="flex-1 h-[1.5px] bg-pink-200" />
+            <div className="hidden sm:block flex-1 h-[1.5px] bg-pink-200 dark:bg-gray-700" />
           </div>
 
           <div className="flex flex-wrap justify-center gap-4">
@@ -651,18 +658,18 @@ const Home = () => {
               <div
                 key={item.id}
                 onClick={() => navigate(`/bunga/${item.id}`)}
-                className="w-full sm:w-[calc(50%-8rem)] lg:w-[calc(25%-1rem)] bg-white p-5 rounded-2xl border border-pink-100 shadow-xs hover:shadow-md hover:-translate-y-1 transition duration-300 cursor-pointer text-center flex flex-col justify-between group"
+                className="w-full sm:w-[calc(50%-8rem)] lg:w-[calc(25%-1rem)] bg-white dark:bg-gray-800 p-5 rounded-2xl border border-pink-100 dark:border-gray-700 shadow-xs hover:shadow-md hover:-translate-y-1 transition duration-300 cursor-pointer text-center flex flex-col justify-between group"
               >
                 <div className="space-y-2">
-                  <div className="w-16 h-16 mx-auto overflow-hidden rounded-full border border-pink-100 p-1 bg-pink-50/30 flex items-center justify-center group-hover:scale-105 transition">
+                  <div className="w-16 h-16 mx-auto overflow-hidden rounded-full border border-pink-100 dark:border-gray-700 p-1 bg-pink-50/30 dark:bg-gray-900 flex items-center justify-center group-hover:scale-105 transition">
                     <img src={item.img} alt={item.nama} className="w-full h-full object-contain" />
                   </div>
-                  <h3 className="font-bold text-pink-900 text-sm">{item.nama}</h3>
-                  <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2">{item.desc}</p>
+                  <h3 className="font-bold text-pink-900 dark:text-gray-100 text-sm">{item.nama}</h3>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2">{item.desc}</p>
                 </div>
 
-                <div className="pt-3 mt-2 border-t border-pink-50">
-                  <span className="text-[11px] font-bold text-pink-600 group-hover:text-pink-700 transition">
+                <div className="pt-3 mt-2 border-t border-pink-50 dark:border-gray-700">
+                  <span className="text-[11px] font-bold text-pink-600 dark:text-pink-400 group-hover:text-pink-700 transition">
                     Baca selengkapnya →
                   </span>
                 </div>
@@ -672,6 +679,9 @@ const Home = () => {
 
         </div>
       </section>
+
+      {/* 6. ULASAN PELANGGAN */}
+      <ReviewCarousel />
 
       {/* MODAL DETAIL MENGAMBANG[cite: 2] */}
       {selectedProduct && (

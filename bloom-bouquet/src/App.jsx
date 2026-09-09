@@ -7,6 +7,7 @@
  *  - Terhubung dengan komponen `Header` dan `Footer` sebagai tata letak global.
  */
 
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
@@ -15,6 +16,7 @@ import { FavoriteProvider } from "./context/FavoriteContext";
 import { OrderProvider } from "./context/OrderContext";
 import { VoucherProvider } from "./context/VoucherContext";
 import { CustomBouquetProvider } from "./context/CustomBouquetContext";
+import { ReviewProvider } from "./context/ReviewContext";
 
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
@@ -30,6 +32,7 @@ import CheckoutPage from "./Pages/Pelanggan/CheckoutPage";
 import Favorites from "./Pages/Pelanggan/FavoritPage";
 import Orders from "./Pages/Pelanggan/PesananSayaPage";
 import Profile from "./Pages/Pelanggan/ProfilPelangganPage";
+import TulisUlasanPage from "./Pages/Pelanggan/TulisUlasanPage";
 
 import Login from "./Pages/Otentikasi/LoginPage";
 import Register from "./Pages/Otentikasi/RegisterPage";
@@ -48,7 +51,9 @@ import PengaturanRangkaiAdminPage from "./Pages/Admin/PengaturanRangkaiAdminPage
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] window.scrollTo: Memanipulasi browser untuk menggulir halaman ke koordinat tertentu.
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [pathname]);
   return null;
@@ -62,7 +67,8 @@ function App() {
           <CustomBouquetProvider>
             <CartProvider>
               <OrderProvider>
-                <BrowserRouter>
+                <ReviewProvider>
+                  <BrowserRouter>
                   <ScrollToTop />
 
                   <div className="min-h-screen bg-pink-50/30 font-sans text-gray-800 flex flex-col justify-between">
@@ -119,6 +125,14 @@ function App() {
                               </ProtectedRoute>
                             }
                           />
+                          <Route
+                            path="/pesanan/ulasan/:orderId"
+                            element={
+                              <ProtectedRoute allowedRole="user">
+                                <TulisUlasanPage />
+                              </ProtectedRoute>
+                            }
+                          />
 
                           {/* Admin Nested Routes */}
                           <Route
@@ -148,6 +162,7 @@ function App() {
                     <Footer />
                   </div>
                 </BrowserRouter>
+                </ReviewProvider>
               </OrderProvider>
             </CartProvider>
           </CustomBouquetProvider>

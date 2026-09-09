@@ -1,9 +1,18 @@
+/**
+ * FILE: /src/Pages/Admin/DaftarProdukAdminPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext, useSearchParams } from "react-router-dom";
 import { Package, PackagePlus, Edit, Trash2, SearchX, ArrowLeft } from "lucide-react";
 import { flowers as initialFlowers } from "../../Data/Flowers";
 import SearchBar from "../../Components/SearchBar";
 import Pagination from "../../Components/Pagination";
+import usePagination from "../../hooks/usePagination";
+import { formatRupiah } from "../../utils/formatCurrency";
 
 const DaftarProdukAdminPage = () => {
   const navigate = useNavigate();
@@ -11,15 +20,21 @@ const DaftarProdukAdminPage = () => {
   const [searchParams] = useSearchParams();
 
   const [flowerList, setFlowerList] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("customFlowersData");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     return saved ? JSON.parse(saved) : initialFlowers;
   });
 
   const [orders, setOrders] = useState(() => {
     let allOrders = [];
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     for (let i = 0; i < localStorage.length; i++) {
+      // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
       const key = localStorage.key(i);
       if (key && key.startsWith("orders_")) {
+        // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
+        // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
         const userOrders = JSON.parse(localStorage.getItem(key));
         allOrders = [...allOrders, ...userOrders];
       }
@@ -29,6 +44,8 @@ const DaftarProdukAdminPage = () => {
 
   const saveToLocal = (data) => {
     setFlowerList(data);
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
+    // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
     localStorage.setItem("customFlowersData", JSON.stringify(data));
   };
 
@@ -42,24 +59,21 @@ const DaftarProdukAdminPage = () => {
     );
 
     if (isBought) {
-      showAlert("error", "Bunga ini tidak dapat dihapus karena sudah ada pesanan!");
+      showAlert("error_toast", "Gagal Dihapus", "Bunga ini tidak dapat dihapus karena sudah ada pesanan!");
       return;
     }
 
     showAlert(
       "delete_confirm", 
+      "Konfirmasi Hapus",
       "Yakin nih bunga nya mau dihapus?", 
       () => {
         const updated = flowerList.filter((item) => item.id !== id);
         saveToLocal(updated);
-        // hide the alert
-        document.body.click(); // Hacky close or rely on outlet context closeAlert if passed, but showAlert passes onConfirm which can just do nothing if closeAlert is not passed. 
-        // Wait, showAlert's onConfirm takes care of closing if we don't pass one, BUT we passed one so we need to close it. 
-        // The CustomAlert closes itself if we don't do anything? 
-        // Let's just reload or let CustomAlert close it. We can just alert success after a delay.
-        setTimeout(() => showAlert("success", "Bunga berhasil dihapus!"), 100);
+        document.body.click();
+        setTimeout(() => showAlert("success", "Berhasil", "Bunga berhasil dihapus!"), 100);
       }, 
-      null,
+      () => {}, // Fungsi kosong agar tombol Batal (onCancel) dimunculkan oleh LayoutAdmin
       "Hapus Aja",
       "Batal"
     );
@@ -71,8 +85,6 @@ const DaftarProdukAdminPage = () => {
   const [selectedJenis, setSelectedJenis] = useState("Semua Jenis");
   const [selectedStatus, setSelectedStatus] = useState(searchParams.get("status") || "Semua Status");
   const [sortBy, setSortBy] = useState("default");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
 
   const filteredFlowers = flowerList.filter((item) => {
     const matchesSearch = 
@@ -107,15 +119,12 @@ const DaftarProdukAdminPage = () => {
     return 0;
   });
 
-  const totalPages = Math.ceil(sortedFlowers.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentFlowers = sortedFlowers.slice(indexOfFirstItem, indexOfLastItem);
+  const { currentData: currentFlowers, totalPages, currentPage, setCurrentPage } = usePagination(sortedFlowers, 8);
 
   return (
     <div className="space-y-6 animate-fadeIn">
       <button 
-        onClick={() => navigate(-1)} 
+        onClick={() => navigate("/admin")}
         className="flex items-center gap-2 text-pink-600 hover:text-pink-700 bg-white px-4 py-2 rounded-full border border-pink-200 shadow-sm transition hover:shadow-md cursor-pointer w-fit mt-2"
       >
         <ArrowLeft size={16} /> Kembali
@@ -132,11 +141,13 @@ const DaftarProdukAdminPage = () => {
         <div className="flex-1 h-[1.5px] bg-pink-200" />
       </div>
 
-      <div className="flex justify-between items-center bg-white p-4 rounded-3xl border border-pink-100 shadow-sm">
-        <h2 className="text-xl font-bold text-pink-900 flex items-center gap-2 px-2">
-          <Package size={24} className="text-pink-500" /> Inventori Bunga
+      <div className="flex justify-between items-center bg-white p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-pink-100 shadow-sm">
+        <h2 className="text-sm sm:text-xl font-bold text-pink-900 flex items-center gap-1.5 sm:gap-2 px-1 sm:px-2">
+          <Package size={20} className="text-pink-500 sm:w-6 sm:h-6" /> 
+          <span className="hidden sm:inline">Inventori Bunga</span>
+          <span className="sm:hidden">Inventori</span>
         </h2>
-        <button onClick={() => navigate('/admin/produk/tambah')} className="px-5 py-2.5 bg-pink-500 hover:bg-pink-600 text-white text-sm font-bold rounded-2xl shadow-xs transition hover:-translate-y-0.5 cursor-pointer flex items-center gap-2">
+        <button onClick={() => navigate('/admin/produk/tambah')} className="px-3 sm:px-5 py-2 sm:py-2.5 bg-pink-500 hover:bg-pink-600 text-white text-[11px] sm:text-sm font-bold rounded-xl sm:rounded-2xl shadow-xs transition hover:-translate-y-0.5 cursor-pointer flex items-center gap-1.5 sm:gap-2 whitespace-nowrap">
           <span>+ Tambah Bunga</span>
         </button>
       </div>
@@ -171,13 +182,13 @@ const DaftarProdukAdminPage = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
           {currentFlowers.map((prod) => (
             <div 
               key={prod.id} 
-              className="bg-white rounded-3xl border border-pink-100 overflow-hidden shadow-xs hover:shadow-md transition duration-300 flex flex-col justify-between group p-3"
+              className="bg-white rounded-3xl border border-pink-100 overflow-hidden shadow-xs hover:shadow-md transition duration-300 flex flex-col justify-between group p-2 sm:p-3"
             >
-              <div className="relative h-48 overflow-hidden rounded-2xl bg-pink-50/20">
+              <div className="relative h-36 sm:h-48 overflow-hidden rounded-2xl bg-pink-50/20">
                 <img
                   src={prod.gambarProduk}
                   alt={prod.namaProduk}
@@ -186,6 +197,10 @@ const DaftarProdukAdminPage = () => {
                 {prod.stok === 0 ? (
                   <span className="absolute top-3 left-3 bg-gray-500 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
                     Habis Terjual
+                  </span>
+                ) : prod.statusProduk === "Diskon" && prod.diskon ? (
+                  <span className="absolute top-3 left-3 bg-pink-100 text-pink-600 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
+                    Diskon {prod.diskon}%
                   </span>
                 ) : prod.statusProduk ? (
                   <span className="absolute top-3 left-3 bg-pink-100 text-pink-600 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-xs">
@@ -198,19 +213,26 @@ const DaftarProdukAdminPage = () => {
                 <span className="text-[10px] font-bold text-pink-400 uppercase tracking-wide block mb-1">
                   {prod.kategori} • <span className="text-pink-600">{prod.jenis}</span>
                 </span>
-                <h3 className="font-serif font-bold text-pink-900 text-sm leading-snug line-clamp-1 mb-1">
+                <h3 className="font-serif font-bold text-pink-900 text-xs sm:text-sm leading-snug line-clamp-1 mb-1">
                   {prod.namaProduk}
                 </h3>
-                <div className="flex items-center gap-2 text-[11px] text-gray-500 font-medium mb-1">
+                <div className="flex items-center gap-1 sm:gap-2 text-[9px] sm:text-[11px] text-gray-500 font-medium mb-1">
                   <span className="flex items-center gap-1 text-amber-400 font-bold">
                     ★ {prod.rating || "4.8"}
                   </span>
                   <span>•</span>
                   <span>Stok {prod.stok ?? "10"}</span>
                 </div>
-                <div className="text-base font-bold text-pink-600 mb-3 flex-1">
-                  Rp {Number(prod.harga).toLocaleString("id-ID")}
-                </div>
+                {prod.diskon ? (
+                  <div className="mb-2 sm:mb-3 flex-1 flex items-baseline gap-1 sm:gap-2">
+                    <span className="text-sm sm:text-base font-bold text-pink-600">{formatRupiah(prod.harga - (prod.harga * prod.diskon / 100))}</span>
+                    <span className="text-[9px] sm:text-[11px] text-gray-400 line-through">{formatRupiah(prod.harga)}</span>
+                  </div>
+                ) : (
+                  <div className="text-sm sm:text-base font-bold text-pink-600 mb-2 sm:mb-3 flex-1">
+                    {formatRupiah(prod.harga)}
+                  </div>
+                )}
                 
                 {/* Admin Controls */}
                 <div className="grid grid-cols-2 gap-2 mt-auto">
@@ -239,6 +261,7 @@ const DaftarProdukAdminPage = () => {
           totalPages={totalPages}
           onPageChange={(page) => {
             setCurrentPage(page);
+            // [DI LUAR MODUL] window.scrollTo: Memanipulasi browser untuk menggulir halaman ke koordinat tertentu.
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}
         />

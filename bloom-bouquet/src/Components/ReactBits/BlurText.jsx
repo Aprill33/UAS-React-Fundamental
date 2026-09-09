@@ -1,3 +1,11 @@
+/**
+ * FILE: /src/Components/ReactBits/BlurText.jsx
+ * TUJUAN: Komponen UI yang dapat digunakan berulang (Reusable Component).
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
+// [DI LUAR MODUL] useRef: Menyimpan referensi elemen DOM atau nilai mutabel yang tidak memicu re-render.
 import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
@@ -27,9 +35,11 @@ const BlurText = ({
   
   // 3. REFERENSI ELEMEN (DOM):
   // ref digunakan untuk menunjuk langsung ke elemen HTML <p> agar bisa diamati posisinya di layar.
+  // [DI LUAR MODUL] useRef: Menyimpan referensi elemen DOM atau nilai mutabel yang tidak memicu re-render.
   const ref = useRef();
   
   // animatedCount digunakan untuk menghitung berapa banyak kata/huruf yang sudah selesai dianimasikan.
+  // [DI LUAR MODUL] useRef: Menyimpan referensi elemen DOM atau nilai mutabel yang tidak memicu re-render.
   const animatedCount = useRef(0);
 
   // 4. KONFIGURASI ANIMASI AWAL (Sebelum muncul):
@@ -48,6 +58,7 @@ const BlurText = ({
 
   // 6. INTERSECTION OBSERVER (Deteksi Layar):
   // useEffect ini bertugas mengamati apakah elemen <p> sudah masuk ke jangkauan layar pengguna.
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {

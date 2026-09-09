@@ -1,21 +1,24 @@
+/**
+ * FILE: /src/Pages/Admin/BungaTerjualAdminPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useEffect } from "react";
 import { ShoppingCart, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { flowers as initialFlowers } from "../../Data/Flowers";
+import { getAllAdminOrders } from "../../context/OrderContext";
+import { formatRupiah } from "../../utils/formatCurrency";
 
 const BungaTerjualAdminPage = () => {
   const [soldList, setSoldList] = useState([]);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     const fetchSold = () => {
-      let orders = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith("orders_")) {
-          const userOrders = JSON.parse(localStorage.getItem(key));
-          orders = [...orders, ...userOrders];
-        }
-      }
+      const orders = getAllAdminOrders();
 
       const soldMap = {};
       orders
@@ -50,7 +53,7 @@ const BungaTerjualAdminPage = () => {
   return (
     <div className="space-y-6 animate-fadeIn">
       <button 
-        onClick={() => navigate(-1)} 
+        onClick={() => navigate("/admin")}
         className="flex items-center gap-2 text-pink-600 hover:text-pink-700 bg-white px-4 py-2 rounded-full border border-pink-200 shadow-sm transition hover:shadow-md cursor-pointer w-fit mt-2"
       >
         <ArrowLeft size={16} /> Kembali
@@ -85,7 +88,7 @@ const BungaTerjualAdminPage = () => {
                 <img src={prod.gambarProduk} alt={prod.namaProduk} className="w-20 h-20 rounded-xl object-cover bg-pink-50 border border-pink-100 shrink-0" />
                 <div className="flex-1">
                   <h5 className="font-bold text-pink-900 text-sm line-clamp-1">{prod.namaProduk}</h5>
-                  <p className="text-xs text-gray-500 font-medium mt-0.5">Rp {prod.harga?.toLocaleString("id-ID") || 0}</p>
+                  <p className="text-xs text-gray-500 font-medium mt-0.5">{formatRupiah(prod.harga || 0)}</p>
                   <div className="mt-2 flex items-center gap-2">
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">
                       {prod.deskripsi}

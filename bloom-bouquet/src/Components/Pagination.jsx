@@ -1,3 +1,9 @@
+/**
+ * FILE: /src/Components/Pagination.jsx
+ * TUJUAN: Komponen UI yang dapat digunakan berulang (Reusable Component).
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
 import React from "react";
 /**
  * FILE: src/Components/Pagination.jsx
@@ -7,13 +13,13 @@ import React from "react";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination = ({ currentPage, totalPages, onPageChange, ...rest }) => {
   if (totalPages <= 1) return null;
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-8">
+    <div className="flex items-center justify-center gap-2 mt-8" {...rest}>
       {/* Tombol Previous */}
       <button
         type="button"

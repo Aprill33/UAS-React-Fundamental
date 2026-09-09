@@ -1,3 +1,10 @@
+/**
+ * FILE: /src/Pages/Admin/LayoutAdmin.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
@@ -36,12 +43,15 @@ const LayoutAdmin = () => {
 
   const closeAlert = () => setAlertData(prev => ({ ...prev, isOpen: false }));
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key && e.key.startsWith("orders_") && e.newValue) {
         // Cek jika jumlah pesanan bertambah (pesanan baru)
         try {
+          // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
           const oldData = e.oldValue ? JSON.parse(e.oldValue) : [];
+          // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
           const newData = JSON.parse(e.newValue);
           if (newData.length > oldData.length) {
             showAlert("success", "Notifikasi Pesanan Baru! 📦", "Ada pesanan baru dari pelanggan yang menunggu untuk diproses.", () => closeAlert(), null, "Tutup");

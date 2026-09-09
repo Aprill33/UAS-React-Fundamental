@@ -1,10 +1,16 @@
+/**
+ * FILE: /src/Pages/Pelanggan/RangkaiBuketPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
 import { useState, useContext } from "react";
 import { CartContext } from "../../context/CartContext";
 import { AuthContext } from "../../context/AuthContext";
 import { CustomBouquetContext } from "../../context/CustomBouquetContext";
 import { useNavigate } from "react-router-dom";
 import CustomAlert from "../../Components/CustomAlert";
-import { Sparkles, ShoppingBag, ArrowLeft, Flower } from "lucide-react";
+import { Sparkles, ShoppingCart, ArrowLeft, Flower } from "lucide-react";
 import flowerImg from "../../assets/flower.png";
 import {
   RoseAnimated,
@@ -125,6 +131,8 @@ const BouquetBuilder = () => {
         confirmText: "Okey Siap",
         cancelText: "Nanti Aja Deh",
         onConfirm: () => {
+          // [DI LUAR MODUL] sessionStorage: Menyimpan data sementara di browser (hilang saat tab ditutup).
+          // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
           sessionStorage.setItem("pendingBouquet", JSON.stringify(customBouquetProduct));
           setAlertData({ isOpen: false });
           navigate("/masuk");
@@ -172,7 +180,7 @@ const BouquetBuilder = () => {
       
       {/* TOMBOL KEMBALI GLOBAL */}
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/")}
         className="absolute top-8 left-4 sm:left-6 inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-pink-500 hover:text-white text-pink-600 font-bold text-xs rounded-full shadow-sm border border-pink-200 transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-x-1"
       >
         <ArrowLeft size={16} />
@@ -180,33 +188,35 @@ const BouquetBuilder = () => {
       </button>
 
       <div className="mb-8 mt-12 sm:mt-0">
-        <div className="flex items-center justify-center gap-4">
-          <div className="flex-1 h-[1.5px] bg-pink-200" />
-          <div className="text-center shrink-0 px-2 flex flex-col items-center space-y-1">
-            <span className="inline-flex items-center gap-1.5 bg-pink-100 text-pink-600 text-xs font-semibold px-3 py-1 rounded-full mb-2">
-              <Sparkles size={14} /> Fitur Interaktif
+        <div className="flex items-center justify-center gap-2 sm:gap-4">
+          <div className="hidden sm:block flex-1 h-[1.5px] bg-pink-200" />
+          <div className="text-center px-1 sm:px-2 flex flex-col items-center space-y-1 max-w-2xl">
+            <span className="inline-flex items-center gap-1.5 bg-pink-100 text-pink-600 text-[10px] sm:text-xs font-semibold px-3 py-1 rounded-full mb-2">
+              <Sparkles size={14} className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Fitur Interaktif
             </span>
-            <h1 className="text-4xl md:text-5xl font-cursive font-bold text-pink-600">
+            <h1 className="text-3xl md:text-5xl font-cursive font-bold text-pink-600 leading-tight">
               Rangkai Buket Sendiri
             </h1>
-            <p className="text-sm text-pink-400">Pilih wadah, tangkai bunga favorit, dan tulis kartu ucapanmu</p>
+            <p className="text-[10px] sm:text-sm text-pink-400 mx-auto leading-relaxed">Pilih wadah, tangkai bunga favorit, dan tulis kartu ucapanmu</p>
           </div>
-          <div className="flex-1 h-[1.5px] bg-pink-200" />
+          <div className="hidden sm:block flex-1 h-[1.5px] bg-pink-200" />
         </div>
       </div>
 
-      <div className="flex justify-center mb-8 gap-2">
+      <div className="flex justify-center mb-8 gap-1.5 sm:gap-2 px-2 sm:px-0">
         {[1, 2, 3].map((s) => (
           <button
             key={s}
             onClick={() => setStep(s)}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+            className={`flex-1 sm:flex-none px-2 sm:px-4 py-2 rounded-xl sm:rounded-full text-[10px] sm:text-xs font-bold transition-all flex flex-col sm:block items-center justify-center leading-tight ${
               step === s
                 ? "bg-pink-500 text-white shadow-md"
                 : "bg-white text-pink-500 border border-pink-200 cursor-pointer hover:bg-pink-50"
             }`}
           >
-            Langkah {s}: {s === 1 ? "Pilih Wadah" : s === 2 ? "Pilih Bunga" : "Kartu Ucapan"}
+            <span className="sm:hidden">Step {s}</span>
+            <span className="hidden sm:inline">Langkah {s}: </span>
+            <span className="text-center">{s === 1 ? "Wadah" : s === 2 ? "Bunga" : "Kartu"}</span>
           </button>
         ))}
       </div>
@@ -556,7 +566,7 @@ const BouquetBuilder = () => {
               onClick={handleAddToCart}
               className="w-full py-3 bg-pink-500 hover:bg-pink-600 text-white rounded-full font-semibold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
             >
-              <ShoppingBag size={16} />
+              <ShoppingCart size={16} />
               Tambah ke Keranjang
             </button>
           </div>

@@ -4,13 +4,16 @@
  * KETERHUBUNGAN: Digunakan oleh hampir seluruh komponen yang membutuhkan data pengguna (seperti `Header`, `Login`, dll).
  */
 
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(() => {
+    // [DI LUAR MODUL] localStorage.getItem: Mengambil data dari memori browser lokal.
     const saved = localStorage.getItem("currentUser");
+    // [DI LUAR MODUL] JSON.parse: Mengubah data string dari localStorage kembali menjadi objek JavaScript.
     return saved ? JSON.parse(saved) : null;
   });
 
@@ -23,8 +26,10 @@ export const AuthProvider = ({ children }) => {
       phone: "+62 812-3456-7890", 
       bio: "Halo, saya admin utama yang mengurus semua pesanan dan produk bunga di Bloom & Bouquet!" 
     };
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("adminProfile");
     if (saved) {
+      // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
       const parsed = JSON.parse(saved);
       if (!parsed.password) {
         parsed.username = "adminbnb";
@@ -36,19 +41,31 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [usersList, setUsersList] = useState(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     const saved = localStorage.getItem("registeredUsers");
+    // [DI LUAR MODUL] JSON.parse: Mengubah string JSON kembali menjadi objek JavaScript.
     return saved ? JSON.parse(saved) : [];
   });
 
+  // [DI LUAR MODUL] useEffect: Hook ini mengeksekusi kode secara otomatis setiap kali nilai state (dependencies array) berubah.
+  // Di sini digunakan untuk otomatis menyimpan data terbaru ke localStorage tanpa harus dipanggil manual.
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string agar bisa disimpan di localStorage.
     localStorage.setItem("currentUser", JSON.stringify(currentUser));
   }, [currentUser]);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
+    // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
     localStorage.setItem("adminProfile", JSON.stringify(adminProfile));
   }, [adminProfile]);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
+    // [DI LUAR MODUL] JSON.stringify: Mengubah objek JS menjadi string JSON (karena Storage API hanya menerima string).
     localStorage.setItem("registeredUsers", JSON.stringify(usersList));
   }, [usersList]);
 
@@ -86,6 +103,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setCurrentUser(null);
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     localStorage.removeItem("currentUser");
   };
 

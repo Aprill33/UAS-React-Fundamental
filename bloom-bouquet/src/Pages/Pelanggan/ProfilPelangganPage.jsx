@@ -1,3 +1,10 @@
+/**
+ * FILE: /src/Pages/Pelanggan/ProfilPelangganPage.jsx
+ * TUJUAN: Halaman aplikasi utama yang merender antarmuka pengguna.
+ * KETERHUBUNGAN: Terintegrasi dengan komponen induk dan menggunakan Context API atau Hooks untuk mengelola datanya.
+ */
+
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +26,7 @@ const Profile = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
     if (currentUser) {
       setFormData(prev => ({
@@ -43,7 +51,9 @@ const Profile = () => {
   };
 
   const handleSave = (e) => {
+    // [DI LUAR MODUL] preventDefault: Mencegah aksi bawaan browser (misal form submit page reload).
     e.preventDefault();
+    // [DI LUAR MODUL] localStorage: Web Storage API untuk menyimpan data di browser secara persisten.
     updateProfile(formData); // Simpan ke localStorage!
     setShowAlert(true);
   };
@@ -75,7 +85,7 @@ const Profile = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 font-sans min-h-[70vh]">
         <div className="mb-6">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-pink-500 hover:text-white text-pink-600 font-bold text-xs rounded-full shadow-sm border border-pink-200 transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-x-1"
           >
             <ArrowLeft size={16} />
@@ -128,6 +138,7 @@ const Profile = () => {
                 <Heart size={18} /> Bunga Favorit
               </button>
               <button 
+                // [DI LUAR MODUL] window.scrollTo: Memanipulasi browser untuk menggulir halaman ke koordinat tertentu.
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                 className="flex items-center gap-3 w-full p-3 text-gray-500 hover:bg-pink-50 hover:text-pink-600 font-medium rounded-xl transition cursor-pointer"
               >

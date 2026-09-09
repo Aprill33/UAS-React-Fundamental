@@ -4,6 +4,7 @@
  * KETERHUBUNGAN: Mengambil data statis makna bunga untuk diedukasikan kepada pengguna.
  */
 
+// [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -16,15 +17,13 @@ const FlowerMeaningsPage = () => {
   const { currentUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
 
+  // [DI LUAR MODUL] useEffect: Digunakan untuk menjalankan side-effect (seperti fetch data, update DOM) setelah komponen di-render.
   useEffect(() => {
+    // [DI LUAR MODUL] window.scrollTo: Memanipulasi browser untuk menggulir halaman ke koordinat tertentu.
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, []);
 
   const handleBuilderAccess = () => {
-    if (!currentUser) {
-      setShowAlert(true);
-      return;
-    }
     navigate("/rangkai-buket");
   };
 
@@ -56,7 +55,7 @@ const FlowerMeaningsPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
           <div>
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/")}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-pink-500 hover:text-white text-pink-600 font-bold text-xs rounded-full shadow-sm border border-pink-200 transition-all duration-300 cursor-pointer hover:shadow-md hover:-translate-x-1"
             >
               <ArrowLeft size={16} />
@@ -66,7 +65,7 @@ const FlowerMeaningsPage = () => {
 
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-center gap-4">
-              <div className="flex-1 h-[1.5px] bg-pink-200" />
+              <div className="w-10 sm:flex-1 h-[2px] bg-pink-300 rounded-full shrink-0" />
               <div className="text-center shrink-0 px-2 flex flex-col items-center space-y-4">
                 <span className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-md text-pink-600 text-xs font-bold px-4 py-1.5 rounded-full border border-pink-200 shadow-xs">
                   <Sparkles size={14} className="text-pink-500 animate-spin" /> Ensiklopedia & Filosofi Flora
@@ -74,11 +73,11 @@ const FlowerMeaningsPage = () => {
                 <h1 className="text-4xl sm:text-6xl font-cursive font-bold text-pink-700 tracking-wide">
                   Makna & Filosofi Bunga
                 </h1>
-                <p className="text-xs sm:text-sm text-pink-500 max-w-xl mx-auto leading-relaxed font-medium">
+                <p className="text-[10px] sm:text-xs text-pink-500 max-w-[280px] sm:max-w-xl mx-auto leading-relaxed font-medium">
                   Setiap tangkai bunga membawa cerita, bahasa rahasia, dan simbolisme mendalam untuk mewakili ketulusan perasaanmu.
                 </p>
               </div>
-              <div className="flex-1 h-[1.5px] bg-pink-200" />
+              <div className="w-10 sm:flex-1 h-[2px] bg-pink-300 rounded-full shrink-0" />
             </div>
           </div>
         </div>
