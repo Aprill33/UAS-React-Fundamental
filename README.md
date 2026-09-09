@@ -161,20 +161,28 @@ Ikuti langkah-langkah mudah di bawah ini untuk menjalankan aplikasi di komputer 
 *(Silakan tempel / masukkan gambar screenshot aplikasi pada masing-masing menu di bawah ini)*
 
 ### Halaman Beranda
-`[![Uploading image.png…]()
+`[<img width="1918" height="879" alt="image" src="https://github.com/user-attachments/assets/9b4211eb-2852-4fd0-88f0-8be3a29d69d7" />
+
 ]`
 
 ### Halaman Katalog Bunga
-`[Tambahkan Screenshot Katalog di sini]`
+`[<img width="959" height="443" alt="image" src="https://github.com/user-attachments/assets/a4aed6eb-2e73-4c01-92ee-4aeaca7151e3" />
+]`
 
 ### Halaman Rangkai Buket Kustom
-`[Tambahkan Screenshot Rangkai Buket di sini]`
+`[<img width="959" height="440" alt="image" src="https://github.com/user-attachments/assets/a0ba7236-1875-48bc-909f-26aa3dc94b80" />
+]`
 
 ### Halaman Keranjang Belanja & Checkout
-`[Tambahkan Screenshot Keranjang & Checkout di sini]`
+`[<img width="1918" height="889" alt="image" src="https://github.com/user-attachments/assets/3be84511-0c19-46b1-9386-a01ab6a306f6" />
+]`
+`[<img width="956" height="440" alt="image" src="https://github.com/user-attachments/assets/e68a71de-0189-4802-b058-fad9cf865847" />
+]`
 
 ### Halaman Dashboard Admin
-`[Tambahkan Screenshot Dashboard Admin di sini]`
+`[<img width="956" height="440" alt="image" src="https://github.com/user-attachments/assets/9474d0d8-47e2-4942-834c-c712e94292bc" />
+]`
 
 ### Halaman Kelola Produk Admin
-`[Tambahkan Screenshot Kelola Produk di sini]`
+`[<img width="942" height="443" alt="image" src="https://github.com/user-attachments/assets/79f4d633-3af7-4117-b43f-d3ca9966998f" />
+]`
