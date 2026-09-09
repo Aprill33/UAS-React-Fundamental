@@ -129,7 +129,7 @@ Ikuti langkah-langkah mudah di bawah ini untuk menjalankan aplikasi di komputer 
 2. **Clone Repositori dari GitHub:**
    Buka Terminal atau Command Prompt (CMD), lalu jalankan perintah berikut untuk mengunduh kode proyek ini:
    ```bash
-   git clone <Masukkan-Link-Repository-GitHub-Anda-Di-Sini>
+   git clone https://github.com/Aprill33/UAS-React-Fundamental.git
    ```
 
 3. **Masuk ke Folder Proyek:**
