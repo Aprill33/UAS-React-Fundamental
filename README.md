@@ -161,7 +161,8 @@ Ikuti langkah-langkah mudah di bawah ini untuk menjalankan aplikasi di komputer 
 *(Silakan tempel / masukkan gambar screenshot aplikasi pada masing-masing menu di bawah ini)*
 
 ### Halaman Beranda
-`[Tambahkan Screenshot Beranda di sini]`
+`[![Uploading image.png…]()
+]`
 
 ### Halaman Katalog Bunga
 `[Tambahkan Screenshot Katalog di sini]`
