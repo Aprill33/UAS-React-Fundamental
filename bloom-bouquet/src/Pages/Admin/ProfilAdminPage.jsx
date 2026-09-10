@@ -85,8 +85,8 @@ const ProfilAdminPage = () => {
           </div>
           <div className="flex-1 text-center sm:text-left mb-2">
             <h1 className="text-2xl font-bold text-gray-800">{currentUser?.fullName || "Admin Utama"}</h1>
-            <p className="text-pink-500 font-medium flex items-center justify-center sm:justify-start gap-1.5 mt-1">
-               <Shield size={16} /> Pusat Kendali Bloom & Bouquet
+            <p className="text-pink-500 font-medium flex items-center justify-center sm:justify-start gap-1.5 mt-1 text-xs sm:text-sm">
+               <Shield size={14} /> Pusat Kendali Bloom & Bouquet
             </p>
           </div>
           <div className="mb-2 w-full sm:w-auto">

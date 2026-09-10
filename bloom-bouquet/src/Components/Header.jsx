@@ -189,23 +189,23 @@ const Header = () => {
 
           {/* LOGO & NAMA BRAND TETAP MUNCUL DI SEMUA UKURAN LAYAR */}
           {currentUser?.role === "admin" ? (
-            <div className="flex items-center gap-2 sm:gap-3 cursor-default">
-              <div className="bg-pink-100 p-1 rounded-full flex items-center justify-center border border-pink-200">
-                <img src={logo} alt="Bloom & Bouquet" className="h-7 w-7 sm:h-9 sm:w-9 object-cover rounded-full bg-white p-0.5" />
+          <div className="flex items-center gap-1.5 sm:gap-3 cursor-default">
+              <div className="bg-pink-100 p-0.5 sm:p-1 rounded-full flex items-center justify-center border border-pink-200">
+                <img src={logo} alt="Bloom & Bouquet" className="h-6 w-6 sm:h-9 sm:w-9 object-cover rounded-full bg-white p-0.5" />
               </div>
               <div className="flex flex-col">
-                <span className="font-cursive font-bold text-lg sm:text-2xl text-pink-700 leading-none">Bloom & Bouquet</span>
-                <span className="text-[8px] sm:text-[10px] text-pink-400 font-semibold tracking-wider mt-0.5">Pusat Kontrol Admin</span>
+                <span className="font-cursive font-bold text-sm sm:text-2xl text-pink-700 leading-none">Bloom & Bouquet</span>
+                <span className="text-[7px] sm:text-[10px] text-pink-400 font-semibold tracking-wider mt-0.5">Pusat Kontrol Admin</span>
               </div>
             </div>
           ) : (
-            <Link to="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-90 transition">
-              <div className="bg-pink-100 p-1 rounded-full flex items-center justify-center border border-pink-200">
-                <img src={logo} alt="Bloom & Bouquet" className="h-7 w-7 sm:h-9 sm:w-9 object-cover rounded-full bg-white p-0.5" />
+            <Link to="/" className="flex items-center gap-1.5 sm:gap-3 hover:opacity-90 transition">
+              <div className="bg-pink-100 p-0.5 sm:p-1 rounded-full flex items-center justify-center border border-pink-200">
+                <img src={logo} alt="Bloom & Bouquet" className="h-6 w-6 sm:h-9 sm:w-9 object-cover rounded-full bg-white p-0.5" />
               </div>
               <div className="flex flex-col">
-                <span className="font-cursive font-bold text-lg sm:text-2xl text-pink-700 leading-none">Bloom & Bouquet</span>
-                <span className="text-[8px] sm:text-[10px] text-pink-400 font-semibold tracking-wider mt-0.5 line-clamp-1">The Best-Looking Flowers in Town</span>
+                <span className="font-cursive font-bold text-sm sm:text-2xl text-pink-700 leading-none">Bloom & Bouquet</span>
+                <span className="text-[7px] sm:text-[10px] text-pink-400 font-semibold tracking-wider mt-0.5 line-clamp-1">The Best-Looking Flowers in Town</span>
               </div>
             </Link>
           )}
@@ -320,10 +320,11 @@ const Header = () => {
               </button>
             )}
 
+            {/* Icon profil: tampil di mobile hanya saat belum login, selalu tampil di desktop */}
             <Link
               to={currentUser ? (currentUser.role === "admin" ? "/admin/profil" : "/profil") : "/masuk"}
               title={currentUser ? "Profil Akun" : "Masuk"}
-              className={`p-2.5 rounded-full transition shadow-xs flex items-center justify-center cursor-pointer ${isActive("/profil") || isActive("/admin/profil") ? "bg-pink-500 text-white" : "bg-pink-100 hover:bg-pink-200 text-pink-600"}`}
+              className={`${currentUser ? 'hidden lg:flex' : 'flex'} p-2.5 rounded-full transition shadow-xs items-center justify-center cursor-pointer ${isActive("/profil") || isActive("/admin/profil") ? "bg-pink-500 text-white" : "bg-pink-100 hover:bg-pink-200 text-pink-600"}`}
             >
               <User size={16} className="sm:w-[18px] sm:h-[18px]" />
             </Link>
@@ -443,14 +444,24 @@ const Header = () => {
                 </Link>
 
                 {currentUser && (
-                  <Link
-                    to="/pesanan"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition ${isActive("/pesanan") ? "bg-pink-500 text-white shadow-sm" : "text-pink-700 hover:bg-pink-50"
-                      }`}
-                  >
-                    <ClipboardList size={18} /> Pesanan Saya
-                  </Link>
+                  <>
+                    <Link
+                      to="/pesanan"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition ${isActive("/pesanan") ? "bg-pink-500 text-white shadow-sm" : "text-pink-700 hover:bg-pink-50"
+                        }`}
+                    >
+                      <ClipboardList size={18} /> Pesanan Saya
+                    </Link>
+                    <Link
+                      to="/profil"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition ${isActive("/profil") ? "bg-pink-500 text-white shadow-sm" : "text-pink-700 hover:bg-pink-50"
+                        }`}
+                    >
+                      <User size={18} /> Profil Saya
+                    </Link>
+                  </>
                 )}
               </>
             )}

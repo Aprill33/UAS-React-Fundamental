@@ -168,8 +168,8 @@ const Cart = () => {
         <div className="flex-1 space-y-4">
           <div className="bg-white rounded-3xl p-6 border border-pink-100 shadow-sm">
             <div className="flex items-center justify-between border-b border-pink-100 pb-4 mb-4">
-              <h2 className="font-bold text-pink-800 text-lg flex items-center gap-2">
-                <ShoppingCart size={20} className="text-pink-500" />
+              <h2 className="font-bold text-pink-800 text-sm sm:text-lg flex items-center gap-2">
+                <ShoppingCart size={18} className="text-pink-500" />
                 Daftar Pesanan ({cartItems.length})
               </h2>
               <button 
