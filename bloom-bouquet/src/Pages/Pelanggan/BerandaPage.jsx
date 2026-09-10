@@ -252,7 +252,7 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 pb-4">
+        <div className="flex overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {displayNewProducts.slice(newIndex, newIndex + 4).map((prod) => (
             <div
               key={prod.id}
@@ -357,7 +357,7 @@ const Home = () => {
             </Link>
           </div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 pb-4">
+          <div className="flex overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {discountProducts.slice(discountIndex, discountIndex + 4).map((prod) => (
               <div
                 key={prod.id}
@@ -473,7 +473,7 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 pb-4">
+        <div className="flex overflow-x-auto snap-x snap-mandatory sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {displayBestProducts.slice(bestIndex, bestIndex + 4).map((prod) => (
             <div
               key={prod.id}
