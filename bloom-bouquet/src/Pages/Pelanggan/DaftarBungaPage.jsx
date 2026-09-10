@@ -139,7 +139,7 @@ const FlowersPage = () => {
         cancelText="Nanti Aja Deh"
       />
 
-      <div className="bg-pink-100/60 py-10 border-b border-pink-200 relative">
+      <div className="bg-pink-100/60 py-8 border-b border-pink-200 relative">
         {/* TOMBOL KEMBALI */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-4">
           <button
@@ -151,22 +151,16 @@ const FlowersPage = () => {
           </button>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-center gap-4">
-            <div className="flex-1 h-[1.5px] bg-pink-200" />
-            <div className="text-center shrink-0 px-2 flex flex-col items-center space-y-3">
-              <span className="inline-flex items-center gap-1.5 bg-white text-pink-600 text-xs font-bold px-4 py-1.5 rounded-full border border-pink-200 shadow-xs">
-                <Sparkles size={14} /> Katalog Lengkap Bloom & Bouquet
-              </span>
-              <h1 className="text-3xl sm:text-5xl font-cursive font-bold text-pink-700 leading-tight">
-                Jelajahi Semua Koleksi Bunga
-              </h1>
-              <p className="text-xs sm:text-sm text-pink-500 max-w-xl mx-auto">
-                Temukan berbagai pilihan buket segar, kotak bunga, dan keranjang cantik untuk setiap momen spesialmu.
-              </p>
-            </div>
-            <div className="flex-1 h-[1.5px] bg-pink-200" />
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center space-y-2">
+          <span className="inline-flex items-center gap-1.5 bg-white text-pink-600 text-xs font-bold px-4 py-1.5 rounded-full border border-pink-200 shadow-xs">
+            <Sparkles size={14} /> Katalog Lengkap Bloom & Bouquet
+          </span>
+          <h1 className="text-xl sm:text-4xl font-cursive font-bold text-pink-700 leading-tight">
+            Jelajahi Semua Koleksi Bunga
+          </h1>
+          <p className="text-[10px] sm:text-sm text-pink-500 max-w-xl mx-auto">
+            Temukan berbagai pilihan buket segar, kotak bunga, dan keranjang cantik untuk setiap momen spesialmu.
+          </p>
         </div>
       </div>
 

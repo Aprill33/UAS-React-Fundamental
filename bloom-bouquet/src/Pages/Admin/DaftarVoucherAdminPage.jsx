@@ -98,10 +98,10 @@ const DaftarVoucherAdminPage = () => {
       <div className="flex items-center justify-center gap-4 mb-2 mt-4">
         <div className="flex-1 h-[1.5px] bg-pink-200" />
         <div className="text-center shrink-0 px-2">
-          <h2 className="text-3xl font-cursive font-bold text-pink-700 mb-1">
+          <h2 className="text-xl sm:text-3xl font-cursive font-bold text-pink-700 mb-1">
             Kelola Voucher Diskon
           </h2>
-          <p className="text-xs text-pink-500">Buat kode promo spesial untuk menarik pelanggan setia Anda.</p>
+          <p className="text-[10px] sm:text-xs text-pink-500">Buat kode promo spesial untuk menarik pelanggan setia Anda.</p>
         </div>
         <div className="flex-1 h-[1.5px] bg-pink-200" />
       </div>

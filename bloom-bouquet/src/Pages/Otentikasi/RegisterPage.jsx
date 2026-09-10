@@ -70,6 +70,7 @@ const Register = () => {
       return;
     }
 
+    setShowErrorAlert(false);
     setShowSuccessAlert(true);
   };
 

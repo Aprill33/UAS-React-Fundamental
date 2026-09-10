@@ -238,15 +238,15 @@ const DaftarProdukAdminPage = () => {
                 <div className="grid grid-cols-2 gap-2 mt-auto">
                   <button 
                     onClick={() => navigate(`/admin/produk/edit/${prod.id}`)}
-                    className="py-2 bg-amber-50 hover:bg-amber-100 text-amber-600 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer border border-amber-100"
+                    className="py-2 px-3 bg-amber-50 hover:bg-amber-100 text-amber-600 font-bold text-xs rounded-xl transition flex items-center justify-center cursor-pointer border border-amber-100"
                   >
-                    <Edit size={14} /> Edit
+                    <Edit size={16} />
                   </button>
                   <button 
                     onClick={() => handleDelete(prod.id)}
-                    className="py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer border border-rose-100"
+                    className="py-2 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs rounded-xl transition flex items-center justify-center cursor-pointer border border-rose-100"
                   >
-                    <Trash2 size={14} /> Hapus
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>
