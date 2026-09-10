@@ -164,7 +164,7 @@ const Home = () => {
       />
 
       {/* HERO SLIDER OTOMATIS (BERGANTI GAMBAR & TEKS) */}
-      <section className="relative w-full h-[450px] sm:h-[520px] overflow-hidden rounded-b-[2.5rem] shadow-md bg-pink-950">
+      <section className="relative w-full h-[280px] sm:h-[520px] overflow-hidden rounded-b-[2rem] shadow-md bg-pink-950">
         {heroSlides.map((slide, index) => (
           <div
             key={index}
@@ -178,23 +178,23 @@ const Home = () => {
               className="w-full h-full object-cover object-center scale-105"
             />
 
-            <div className="absolute inset-0 z-20 max-w-7xl mx-auto px-6 sm:px-10 flex flex-col justify-center items-start text-white space-y-5">
-              <span className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white text-xs font-bold px-4 py-1.5 rounded-full border border-white/30 shadow-xs">
-                <Sparkles size={14} /> Spesial Bloom & Bouquet
+            <div className="absolute inset-0 z-20 max-w-7xl mx-auto px-5 sm:px-10 flex flex-col justify-center items-start text-white space-y-2.5 sm:space-y-5">
+              <span className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md text-white text-[10px] sm:text-xs font-bold px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-white/30 shadow-xs">
+                <Sparkles size={12} /> Spesial Bloom & Bouquet
               </span>
-              <h1 className="text-4xl sm:text-6xl font-cursive font-bold text-pink-100 max-w-xl leading-tight drop-shadow-lg">
+              <h1 className="text-2xl sm:text-6xl font-cursive font-bold text-pink-100 max-w-xl leading-tight drop-shadow-lg">
                 {slide.title}
               </h1>
-              <p className="text-xs sm:text-base text-pink-50 max-w-md leading-relaxed font-medium">
+              <p className="text-[10px] sm:text-base text-pink-50 max-w-md leading-relaxed font-medium line-clamp-2 sm:line-clamp-none">
                 {slide.subtitle}
               </p>
-              <div className="pt-2">
+              <div className="pt-1 sm:pt-2">
                 <button
                   onClick={handleBuilderClick}
-                  className="px-7 py-3.5 bg-pink-500 hover:bg-pink-600 text-white rounded-full font-bold text-xs sm:text-sm shadow-lg hover:scale-105 transition duration-300 flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-2.5 sm:px-7 sm:py-3.5 bg-pink-500 hover:bg-pink-600 text-white rounded-full font-bold text-[10px] sm:text-sm shadow-lg hover:scale-105 transition duration-300 flex items-center gap-2 cursor-pointer"
                 >
                   <span>Mulai Rangkai Sekarang</span>
-                  <ArrowRight size={16} />
+                  <ArrowRight size={14} />
                 </button>
               </div>
             </div>
