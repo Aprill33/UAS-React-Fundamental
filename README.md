@@ -10,6 +10,7 @@
 - 🚀 **Live Demo Web App:** [https://bloomnbouquet.vercel.app/](https://bloomnbouquet.vercel.app/)
 - 📦 **GitHub Repository:** [https://github.com/Aprill33/UAS-React-Fundamental](https://github.com/Aprill33/UAS-React-Fundamental)
 - 📂 **Subfolder Proyek:** [UAS-React-Fundamental/bloom-bouquet](https://github.com/Aprill33/UAS-React-Fundamental/tree/main/bloom-bouquet)
+- **Video Presentasi :**  [https://drive.google.com/drive/folders/1TxTMkM7pLx6gs6Wy9lewIZ0DbcCwUuoY?usp=sharing]
 
 ---
 
