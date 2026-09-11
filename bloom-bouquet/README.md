@@ -1,179 +1,304 @@
-# 🌸 Bloom & Bouquet
+# 🌸 Bloom & Bouquet — Toko Bunga & E-Commerce Buket Kustom
 
-**Bloom & Bouquet** adalah sebuah aplikasi web *e-commerce* dan toko bunga (*florist*) interaktif yang dibangun menggunakan **React.js**. Aplikasi ini dirancang untuk memberikan pengalaman berbelanja bunga yang menyenangkan, memungkinkan pelanggan untuk menjelajahi katalog produk, mempelajari filosofi di balik setiap bunga, hingga merangkai buket kustom secara mandiri. Untuk memastikan kelancaran transaksi tanpa menghilangkan jejak, aplikasi ini menyimpan riwayat keranjang, favorit, hingga pesanan pengguna dengan aman menggunakan fitur penyimpanan bawaan peramban web (*Web Storage API*).
-
----
-
-## ✨ Daftar Fitur
-
-Aplikasi ini dibagi menjadi dua antarmuka (Role): **Pelanggan** dan **Admin**.
-
-**👤 Fitur Pelanggan (User):**
-- **Autentikasi:** Mendaftar akun baru dan masuk (*Login/Register*).
-- **Beranda & Katalog:** Menampilkan koleksi terbaru, diskon, dan best seller.
-- **Pencarian & Filter:** Mencari bunga berdasarkan nama, kategori, jenis, dan ketersediaan stok.
-- **Keranjang Belanja:** Menambah produk ke keranjang dan mengubah jumlah kuantitas.
-- **Favorit (Wishlist):** Menyimpan daftar bunga yang disukai untuk dibeli nanti.
-- **Checkout:** Proses penyelesaian pesanan dan penggunaan Voucher Diskon.
-- **Beri Ulasan:** Memberikan penilaian dan komentar (*review*) setelah pesanan selesai.
-- **Rangkai Buket Kustom:** Pelanggan dapat membuat buket sendiri dengan memilih ukuran, warna, bunga utama, dan hiasan tambahan.
-- **Arti Bunga (Edukasi):** Membaca artikel filosofi dan makna di balik jenis-jenis bunga.
-- **Pesanan Saya & Profil:** Melacak status pesanan dan mengedit data diri pelanggan.
-
-**👑 Fitur Admin:**
-- **Dashboard Admin:** Ringkasan statistik (total pesanan, total produk).
-- **Manajemen Produk:** Menambah, mengedit, dan menghapus data bunga (katalog).
-- **Manajemen Pesanan:** Memperbarui status pesanan pelanggan (Dikemas, Dikirim, Selesai).
-- **Manajemen Voucher:** Membuat dan mengatur kupon diskon.
-- **Bunga Terjual:** Melihat riwayat produk yang telah terjual.
-- **Pengaturan Rangkai Buket:** Mengelola opsi bunga kustom (harga, stok hiasan).
+> **Platform Belanja Bunga Online, Interaktif, dan Penuh Makna**
+> Proyek Ujian Akhir Semester (UAS) — *React Fundamental & Frontend Web Application*
 
 ---
 
-## 🛠️ Teknologi yang Digunakan
+## 🔗 Link Tautan & Repositori
 
-Aplikasi ini sepenuhnya dibangun dengan teknologi web modern:
-- **React 18** (Vite.js)
-- **Tailwind CSS** (Pembuatan *styling* UI secara responsif)
-- **React Router DOM** (Navigasi antar halaman / SPA)
-- **Context API** (Manajemen *state* global seperti *Cart* dan *Auth*)
-- **Lucide React & React Icons** (Kumpulan ikon antarmuka yang lengkap)
-- **ReactBits & Framer Motion** (Menambahkan animasi keren seperti *Blur Text* dan *Fade In*)
-- **LocalStorage & SessionStorage** (Penyimpanan data lokal persisten tanpa database)
+- 🚀 **Live Demo Web App:** [https://bloomnbouquet-git-main-aprilliyanti.vercel.app](https://bloomnbouquet-git-main-aprilliyanti.vercel.app)
+- 📦 **GitHub Repository:** [https://github.com/Aprill33/UAS-React-Fundamental](https://github.com/Aprill33/UAS-React-Fundamental)
+- 📂 **Subfolder Proyek:** [UAS-React-Fundamental/bloom-bouquet](https://github.com/Aprill33/UAS-React-Fundamental/tree/main/bloom-bouquet)
 
 ---
 
-## 📁 Struktur Folder Proyek
+## 🔑 Akun Demo Login (Kredensial)
+
+| Role | Username | Password | Hak Akses & Fitur |
+| :--- | :--- | :--- | :--- |
+| 👑 **Admin** | `admin` | `admin123` | Akses penuh: Dashboard Admin, Kelola Produk, Kelola Pesanan, Kelola Voucher, Pengaturan Rangkai Buket, Bunga Terjual. |
+| 👤 **Pelanggan** | *(Daftar Akun Baru)* | *(Buat sendiri)* | Akses penuh sebagai pembeli: Beranda, Katalog Bunga, Rangkai Buket, Keranjang, Checkout, Favorit, Pesanan Saya, Profil. |
+
+> 📱 **Akses Tanpa Login:**
+> Pengunjung dapat menjelajahi Beranda, Katalog Bunga, Arti Bunga, dan halaman Rangkai Buket tanpa perlu membuat akun terlebih dahulu.
+
+---
+
+## a. 📖 Nama dan Deskripsi Aplikasi
+
+**Bloom & Bouquet** adalah aplikasi web *e-commerce* toko bunga (*florist*) modern yang dirancang untuk mendigitalkan seluruh pengalaman berbelanja bunga secara *end-to-end*. Aplikasi ini memungkinkan pelanggan untuk:
+
+1. **Menjelajahi Katalog Bunga (*Flower Catalogue*):** Temukan ratusan pilihan buket segar, bunga potong, kotak bunga, dan keranjang cantik dengan fitur pencarian dan filter canggih.
+2. **Merangkai Buket Kustom (*Custom Bouquet Builder*):** Pelanggan dapat merancang sendiri buket impian mereka dengan memilih ukuran, warna tema, bunga utama, dan hiasan tambahan secara interaktif di atas kanvas visual.
+3. **Belanja dengan Mudah:** Sistem keranjang belanja, penggunaan voucher diskon, dan proses checkout lengkap dengan formulir pengiriman.
+4. **Belajar Filosofi Bunga (*Arti Bunga*):** Membaca artikel edukasi mengenai makna dan filosofi di balik setiap jenis bunga.
+5. **Panel Admin Lengkap:** Pengelola toko dapat mengelola seluruh operasional bisnis mulai dari produk, pesanan, voucher, hingga konfigurasi buket kustom.
+
+Karena aplikasi ini berjalan sepenuhnya di sisi klien (*Frontend Only*), seluruh data (produk, pengguna, pesanan, favorit, dan ulasan) disimpan dengan aman menggunakan **Web Storage API** (*localStorage* & *sessionStorage*) bawaan peramban web.
+
+---
+
+## b. 🌟 Daftar Fitur Lengkap
+
+### 1. Autentikasi & Manajemen Akun
+- Login dan Registrasi akun pengguna baru dengan validasi form.
+- Pemisahan hak akses dinamis sesuai peran (**Admin** dan **Pelanggan**).
+- Perlindungan rute halaman (`ProtectedRoute`) agar halaman sensitif tidak bisa diakses tanpa login.
+- Edit profil dan data diri akun pelanggan.
+
+### 2. Beranda & Slider Hero
+- Slider hero otomatis dengan efek transisi gambar dan teks yang berganti setiap 5 detik.
+- Tampilan koleksi produk terbaru, produk diskon spesial, dan produk best seller.
+- Tampilan carousel testimoni ulasan pelanggan.
+- Navigasi cepat ke fitur Rangkai Buket, Katalog, dan Arti Bunga.
+- Bagian "Tentang Kami" dengan deskripsi visi dan misi toko.
+
+### 3. Katalog Bunga (*Daftar Bunga*)
+- Menampilkan seluruh produk bunga dengan grid responsif.
+- **Pencarian Instan:** Mencari produk berdasarkan nama, kategori, atau jenis.
+- **Filter Multi-dimensi:** Filter berdasarkan Kategori Rangkaian (Flower Bouquet, Flower Box, Flower Basket), Jenis Bunga, dan Status Produk (Baru, Best Seller, Diskon, Ready Stock).
+- **Pengurutan:** Urutkan produk berdasarkan nama (A-Z, Z-A) atau harga (termurah/termahal).
+- Tampilan pop-up modal detail produk untuk melihat informasi lengkap sebelum membeli.
+- Tombol tambah ke keranjang dan tambah ke daftar favorit langsung dari kartu produk.
+
+### 4. Keranjang Belanja (*Shopping Cart*)
+- Menambah, mengurangi, dan menghapus item dari keranjang.
+- Pilih item tertentu atau pilih semua untuk di-checkout.
+- Ringkasan harga otomatis (subtotal, diskon).
+
+### 5. Checkout & Voucher Diskon
+- Formulir pengiriman lengkap (nama penerima, alamat, nomor telepon, catatan).
+- Pilihan metode pengiriman.
+- Input kode voucher diskon dengan validasi otomatis (potongan persentase atau nominal, minimal belanja).
+- Ringkasan pesanan final sebelum konfirmasi.
+
+### 6. Favorit / Wishlist
+- Simpan bunga favorit untuk dibeli nanti.
+- Halaman daftar bunga yang sudah di-*wishlist*.
+- Sinkronisasi status favorit di seluruh halaman (katalog, beranda, detail modal).
+
+### 7. Pesanan Saya (*Order Tracking*)
+- Riwayat semua pesanan yang pernah dibuat.
+- Melihat detail isi pesanan, total harga, dan status pengiriman.
+- Akses tombol "Tulis Ulasan" setelah pesanan berstatus Selesai.
+
+### 8. Ulasan Produk (*Review*)
+- Menulis ulasan dan memberikan rating bintang (1-5) untuk produk yang sudah dibeli.
+- Ulasan ditampilkan di carousel testimoni pada halaman Beranda.
+
+### 9. Rangkai Buket Kustom (*Custom Bouquet Builder*)
+- Simulator interaktif untuk merancang buket sendiri:
+  - Memilih ukuran buket (Kecil, Sedang, Besar)
+  - Memilih warna tema buket
+  - Memilih bunga utama dari daftar yang tersedia
+  - Menambahkan hiasan/aksesoris tambahan
+- Kalkulasi harga otomatis sesuai pilihan.
+- Langsung tambah buket kustom ke keranjang belanja.
+
+### 10. Arti Bunga (*Flower Philosophy*)
+- Kumpulan artikel edukasi mengenai filosofi dan makna di balik berbagai jenis bunga.
+- Halaman detail untuk setiap artikel bunga.
+
+### 11. Dashboard & Panel Admin
+- **Dashboard:** Statistik ringkasan (total produk, total pesanan, total voucher aktif, bunga terjual).
+- **Manajemen Produk:** Tambah, edit, dan hapus produk bunga (nama, kategori, jenis, harga, stok, gambar, status).
+- **Manajemen Pesanan:** Melihat semua pesanan dan memperbarui status pesanan (Dikemas → Dikirim → Selesai).
+- **Manajemen Voucher:** Membuat, mengaktifkan/menonaktifkan, dan menghapus kode voucher diskon.
+- **Bunga Terjual:** Laporan riwayat produk yang berhasil terjual.
+- **Pengaturan Rangkai Buket:** Mengelola daftar pilihan bunga, hiasan, dan harga untuk fitur Custom Bouquet Builder.
+
+---
+
+## c. 🛠️ Teknologi yang Digunakan
+
+Aplikasi ini sepenuhnya dibangun menggunakan teknologi *frontend* modern:
+
+| Teknologi | Versi | Kegunaan |
+| :--- | :--- | :--- |
+| **React** | v19 | Library utama untuk membangun UI berbasis komponen |
+| **Vite** | v8 | Build tool & development server yang cepat |
+| **React Router DOM** | v7 | Navigasi antar halaman (*Client-Side Routing* / SPA) |
+| **Tailwind CSS** | v4 | Styling UI responsif berbasis utility-class |
+| **Lucide React** | v1 | Kumpulan ikon antarmuka yang bersih dan konsisten |
+| **React Icons** | v5 | Ikon tambahan dari berbagai library populer |
+| **Framer Motion** | v13 | Animasi dan transisi UI (efek Blur Text, Fade In, dll.) |
+| **Context API** | React Built-in | Manajemen *state* global (Auth, Cart, Favorites, Orders, Voucher, Review) |
+| **LocalStorage API** | Browser Built-in | Penyimpanan data persisten tanpa database eksternal |
+| **SessionStorage API** | Browser Built-in | Penyimpanan data sesi sementara |
+| **Vercel** | - | Platform *deployment* dan hosting aplikasi web |
+
+---
+
+## d. 📁 Struktur Folder Proyek
 
 Karena proyek ini berjalan penuh di sisi klien (*Front-End Only*), semua logika dan tampilan diatur dalam folder `src/`.
 
-```text
+```plaintext
 bloom-bouquet/
-├── public/                 # Aset publik statis (favicon, logo)
+├── public/                     # Aset publik statis (favicon)
 ├── src/
-│   ├── assets/             # [Berisi kumpulan gambar bunga dan aset visual UI]
-│   ├── Components/         # Komponen UI Reusable
-│   │   ├── ReactBits/      # Komponen animasi pihak ketiga (BlurText.jsx)
-│   │   ├── CustomAlert.jsx # Pop-up notifikasi kecil (toast/alert)
-│   │   ├── CustomDropdown.jsx # Menu tarik-turun (contoh: menu klik profil)
-│   │   ├── FlowerIcons.jsx # Kumpulan ikon dekoratif berbentuk bunga
-│   │   ├── Footer.jsx      # Bagian paling bawah (kaki) halaman
-│   │   ├── Header.jsx      # Bagian navigasi (atas) halaman
-│   │   ├── Pagination.jsx  # Tombol angka untuk pindah halaman
-│   │   ├── ProductCard.jsx # Kartu untuk menampilkan satu produk bunga
-│   │   ├── ProductDetailModal.jsx # Jendela (pop-up) detail suatu produk
-│   │   ├── ProtectedRoute.jsx # Pelindung halaman (mencegah akses tanpa login)
-│   │   ├── ReviewCarousel.jsx # Slider otomatis untuk testimoni pelanggan
-│   │   └── SearchBar.jsx   # Kolom input untuk mencari bunga
-│   ├── context/            # Global State Management
-│   │   ├── AuthContext.jsx # Mengatur data sesi login dan registrasi pengguna
-│   │   ├── CartContext.jsx # Mengatur isi keranjang belanja
-│   │   ├── CustomBouquetContext.jsx # Mengatur fitur merangkai buket
-│   │   ├── FavoriteContext.jsx # Mengatur daftar bunga yang disukai (Wishlist)
-│   │   ├── OrderContext.jsx # Mengatur data checkout dan riwayat pesanan
-│   │   ├── ReviewContext.jsx # Mengatur pengiriman ulasan produk
-│   │   └── VoucherContext.jsx # Mengatur validasi kode kupon diskon
-│   ├── Data/               # Data dummy/inisial statis pengganti Database
-│   │   ├── Flowers.js      # Kumpulan data katalog produk bunga
-│   │   ├── Reviews.js      # Kumpulan data ulasan pembeli
-│   │   └── Vouchers.js     # Kumpulan data kupon diskon
-│   ├── hooks/              # Custom Hooks React
-│   │   └── usePagination.js # Logika matematika untuk penomoran halaman
-│   ├── Pages/              # Folder Halaman-Halaman
-│   │   ├── Admin/          # Halaman Panel Admin
-│   │   │   ├── BerandaAdminPage.jsx # Halaman ringkasan dashboard admin
-│   │   │   ├── BungaTerjualAdminPage.jsx # Riwayat produk-produk yang terjual
-│   │   │   ├── DaftarPesananAdminPage.jsx # Tabel untuk mengubah status pesanan
-│   │   │   ├── DaftarProdukAdminPage.jsx # Tabel manajemen katalog produk
-│   │   │   ├── DaftarVoucherAdminPage.jsx # Tabel manajemen daftar voucher
-│   │   │   ├── FormProdukAdminPage.jsx # Form untuk menambah/mengedit produk
-│   │   │   ├── LayoutAdmin.jsx # Pembungkus sisi layar (*Sidebar*) halaman admin
-│   │   │   ├── PengaturanRangkaiAdminPage.jsx # Kelola opsi bunga kustom
-│   │   │   └── ProfilAdminPage.jsx # Form edit biodata akun admin
-│   │   ├── Error/          # Halaman Error Not Found
-│   │   │   └── Error404Page.jsx # Halaman yang muncul jika link URL salah
-│   │   ├── Otentikasi/     # Halaman Autentikasi
-│   │   │   ├── LoginPage.jsx # Form untuk masuk / login
-│   │   │   └── RegisterPage.jsx # Form untuk daftar akun baru
-│   │   └── Pelanggan/      # Halaman Antarmuka Pelanggan
-│   │       ├── ArtiBungaPage.jsx # Kumpulan artikel filosofi macam-macam bunga
-│   │       ├── BerandaPage.jsx # Halaman depan (Koleksi Terbaru & Best Seller)
-│   │       ├── CheckoutPage.jsx # Halaman formulir pengiriman & pembayaran
-│   │       ├── DaftarBungaPage.jsx # Halaman katalog utama produk bunga
-│   │       ├── DetailArtiBungaPage.jsx # Artikel mendetail mengenai satu bunga
-│   │       ├── FavoritPage.jsx # Halaman daftar bunga kesukaan
-│   │       ├── KeranjangPage.jsx # Halaman keranjang belanja
-│   │       ├── PesananSayaPage.jsx # Halaman cek resi/status pesanan pelanggan
-│   │       ├── ProfilPelangganPage.jsx # Halaman profil dan edit biodata pelanggan
-│   │       ├── RangkaiBuketPage.jsx # Simulator kanvas untuk merangkai buket
-│   │       └── TulisUlasanPage.jsx # Form untuk menulis ulasan setelah selesai beli
-│   ├── utils/              # Fungsi utilitas pembantu
-│   │   └── formatCurrency.js # Fungsi otomatis mengubah angka menjadi format Rupiah
-│   ├── App.css             # Penambahan animasi CSS sederhana (loader spinner)
-│   ├── App.jsx             # Pengaturan Routing & Layouting Utama
-│   ├── main.jsx            # Titik masuk utama aplikasi (Root Render)
-│   └── index.css           # File konfigurasi utama untuk Tailwind CSS v4
-├── package.json            # Daftar pustaka dan script (dependensi)
-└── vite.config.js          # Konfigurasi *bundler* Vite
+│   ├── assets/                 # Gambar bunga, logo, dan aset visual UI
+│   ├── Components/             # Komponen UI Reusable (Dapat Dipakai Ulang)
+│   │   ├── ReactBits/          # Komponen animasi (BlurText.jsx, dll.)
+│   │   ├── CustomAlert.jsx     # Pop-up notifikasi (toast/modal alert)
+│   │   ├── CustomDropdown.jsx  # Menu tarik-turun kustom
+│   │   ├── FlowerIcons.jsx     # Ikon dekoratif berbentuk bunga
+│   │   ├── Footer.jsx          # Kaki halaman (footer)
+│   │   ├── Header.jsx          # Navigasi atas (navbar + hamburger mobile)
+│   │   ├── Pagination.jsx      # Komponen penomoran halaman
+│   │   ├── ProductCard.jsx     # Kartu tampilan satu produk bunga
+│   │   ├── ProductDetailModal.jsx  # Pop-up detail produk
+│   │   ├── ProtectedRoute.jsx  # Pelindung rute (mencegah akses tanpa login)
+│   │   ├── ReviewCarousel.jsx  # Slider otomatis testimoni pelanggan
+│   │   └── SearchBar.jsx       # Kolom pencarian dan filter produk
+│   ├── context/                # Global State Management (Context API)
+│   │   ├── AuthContext.jsx     # Sesi login, registrasi, dan data pengguna
+│   │   ├── CartContext.jsx     # Isi dan manajemen keranjang belanja
+│   │   ├── CustomBouquetContext.jsx  # State merangkai buket kustom
+│   │   ├── FavoriteContext.jsx # Daftar bunga favorit / wishlist
+│   │   ├── OrderContext.jsx    # Data checkout dan riwayat pesanan
+│   │   ├── ReviewContext.jsx   # Pengiriman dan penyimpanan ulasan produk
+│   │   └── VoucherContext.jsx  # Validasi dan manajemen kode kupon diskon
+│   ├── Data/                   # Data statis pengganti database
+│   │   ├── Flowers.js          # Katalog data produk bunga
+│   │   ├── Reviews.js          # Data ulasan pelanggan
+│   │   └── Vouchers.js         # Data kupon diskon
+│   ├── hooks/                  # Custom React Hooks
+│   │   └── usePagination.js    # Logika pembagian data per halaman
+│   ├── Pages/                  # Kumpulan Halaman Aplikasi
+│   │   ├── Admin/              # Halaman Panel Admin
+│   │   │   ├── BerandaAdminPage.jsx          # Dashboard ringkasan admin
+│   │   │   ├── BungaTerjualAdminPage.jsx     # Laporan bunga terjual
+│   │   │   ├── DaftarPesananAdminPage.jsx    # Kelola & update status pesanan
+│   │   │   ├── DaftarProdukAdminPage.jsx     # Kelola katalog produk
+│   │   │   ├── DaftarVoucherAdminPage.jsx    # Kelola voucher diskon
+│   │   │   ├── FormProdukAdminPage.jsx       # Form tambah/edit produk
+│   │   │   ├── LayoutAdmin.jsx               # Layout wrapper halaman admin
+│   │   │   ├── PengaturanRangkaiAdminPage.jsx # Kelola opsi Custom Bouquet
+│   │   │   └── ProfilAdminPage.jsx           # Edit profil akun admin
+│   │   ├── Error/              # Halaman Error
+│   │   │   └── Error404Page.jsx              # Halaman 404 Not Found
+│   │   ├── Otentikasi/         # Halaman Autentikasi
+│   │   │   ├── LoginPage.jsx                 # Form masuk / login
+│   │   │   └── RegisterPage.jsx              # Form daftar akun baru
+│   │   └── Pelanggan/          # Halaman Antarmuka Pelanggan
+│   │       ├── ArtiBungaPage.jsx             # Daftar artikel filosofi bunga
+│   │       ├── BerandaPage.jsx               # Halaman depan (Hero, Produk, Ulasan)
+│   │       ├── CheckoutPage.jsx              # Form pengiriman & konfirmasi pesanan
+│   │       ├── DaftarBungaPage.jsx           # Katalog bunga + filter + pencarian
+│   │       ├── DetailArtiBungaPage.jsx       # Artikel detail satu jenis bunga
+│   │       ├── FavoritPage.jsx               # Daftar bunga favorit / wishlist
+│   │       ├── KeranjangPage.jsx             # Keranjang belanja
+│   │       ├── PesananSayaPage.jsx           # Riwayat & status pesanan pelanggan
+│   │       ├── ProfilPelangganPage.jsx       # Profil & edit biodata pelanggan
+│   │       ├── RangkaiBuketPage.jsx          # Simulator merangkai buket kustom
+│   │       └── TulisUlasanPage.jsx           # Form menulis ulasan produk
+│   ├── utils/                  # Fungsi Utilitas Pembantu
+│   │   └── formatCurrency.js   # Konversi angka ke format Rupiah (Rp)
+│   ├── App.jsx                 # Konfigurasi Routing & Layout Utama
+│   ├── main.jsx                # Entry point React (Root Render)
+│   └── index.css               # Konfigurasi utama Tailwind CSS v4 & tema font
+├── vercel.json                 # Konfigurasi rewrite URL untuk Vercel SPA
+├── package.json                # Daftar dependensi & script
+└── vite.config.js              # Konfigurasi bundler Vite
 ```
 
 ---
 
-## 🚀 Cara Instalasi dan Menjalankan Frontend
+## e. 🚀 Cara Instalasi dan Menjalankan Proyek
 
-Ikuti langkah-langkah mudah di bawah ini untuk menjalankan aplikasi di komputer Anda:
+### Prasyarat:
+- **Node.js** (Versi 18 atau lebih baru) — [Download Node.js](https://nodejs.org/en)
+- **Git** — [Download Git](https://git-scm.com/)
+- **npm** atau **pnpm** (package manager)
 
-1. **Siapkan Prasyarat:**
-   Pastikan Anda sudah menginstal **[Node.js](https://nodejs.org/en)** (minimal versi 18+) dan juga **Git** di komputer Anda.
+### Langkah Menjalankan:
 
-2. **Clone Repositori dari GitHub:**
-   Buka Terminal atau Command Prompt (CMD), lalu jalankan perintah berikut untuk mengunduh kode proyek ini:
+1. **Clone repositori dari GitHub:**
    ```bash
    git clone https://github.com/Aprill33/UAS-React-Fundamental.git
    ```
 
-3. **Masuk ke Folder Proyek:**
+2. **Masuk ke folder proyek:**
    ```bash
-   cd bloom-bouquet
+   cd UAS-React-Fundamental/bloom-bouquet
    ```
 
-4. **Instal Dependensi / Pustaka yang Dibutuhkan:**
-   Gunakan perintah `npm` (atau `pnpm` jika Anda menggunakannya) untuk memasang semua modul:
+3. **Instal semua dependensi:**
    ```bash
    npm install
    ```
-   *(Atau jalankan `pnpm install` jika memakai pnpm)*
+   *(Atau gunakan `pnpm install` jika memakai pnpm)*
 
-5. **Jalankan Aplikasi:**
-   Setelah proses instalasi selesai, jalankan server pengembangan dengan perintah:
+4. **Jalankan server development:**
    ```bash
    npm run dev
    ```
-   *(Atau jalankan `pnpm dev`)*
+   *(Atau gunakan `pnpm dev`)*
 
-6. **Selesai!**
-   Buka *browser* Anda dan kunjungi tautan: **[http://localhost:5173](http://localhost:5173)**
+5. **Buka di browser:**
+   ```
+   http://localhost:5173
+   ```
 
 ---
 
-## 📸 Screenshot Aplikasi
+## f. 🏗️ Build untuk Produksi
 
-*(Silakan tempel / masukkan gambar screenshot aplikasi pada masing-masing menu di bawah ini)*
+Untuk membuat versi produksi yang dioptimalkan:
+```bash
+npm run build
+```
+File hasil build akan tersimpan di folder `dist/` dan siap untuk di-deploy ke platform hosting seperti Vercel.
 
-### Halaman Beranda
-`[Tambahkan Screenshot Beranda di sini]`
+---
 
-### Halaman Katalog Bunga
-`[Tambahkan Screenshot Katalog di sini]`
+## g. 📡 Informasi Deployment
 
-### Halaman Rangkai Buket Kustom
-`[Tambahkan Screenshot Rangkai Buket di sini]`
+### Platform: Vercel
 
-### Halaman Keranjang Belanja & Checkout
-`[Tambahkan Screenshot Keranjang & Checkout di sini]`
+Proyek ini di-deploy di **Vercel** dan dikonfigurasi sebagai *Single Page Application (SPA)* menggunakan file `vercel.json` agar semua rute React Router dapat berfungsi dengan benar:
 
-### Halaman Dashboard Admin
-`[Tambahkan Screenshot Dashboard Admin di sini]`
+```json
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
 
-### Halaman Kelola Produk Admin
-`[Tambahkan Screenshot Kelola Produk di sini]`
+### URL Live:
+- **Produksi:** [https://bloomnbouquet-git-main-aprilliyanti.vercel.app](https://bloomnbouquet-git-main-aprilliyanti.vercel.app)
+
+### Catatan Penting:
+> ⚠️ Seluruh data (produk, pesanan, akun pengguna, dll.) disimpan di **LocalStorage** browser pengguna masing-masing. Data tidak tersinkronisasi antar perangkat/browser yang berbeda, karena proyek ini adalah aplikasi *Frontend Only* tanpa backend/database eksternal.
+
+---
+
+## h. 🖼️ Screenshot Tampilan Aplikasi
+
+### 1. Halaman Beranda (Hero Slider & Produk Terbaru)
+*Tampilan halaman depan dengan hero slider otomatis, koleksi bunga terbaru, produk diskon, best seller, dan testimoni pelanggan.*
+
+### 2. Katalog Bunga (Filter & Pencarian)
+*Tampilan halaman katalog lengkap dengan filter kategori, jenis, status produk, pengurutan harga, dan pop-up detail produk.*
+
+### 3. Rangkai Buket Kustom (Custom Bouquet Builder)
+*Simulator interaktif memilih ukuran, warna, bunga utama, dan hiasan buket dengan kalkulasi harga real-time.*
+
+### 4. Keranjang Belanja & Checkout
+*Tampilan keranjang belanja dengan pilihan item, input kode voucher diskon, dan formulir pengiriman.*
+
+### 5. Dashboard Admin
+*Tampilan panel admin dengan statistik ringkasan, manajemen produk, pesanan, dan voucher.*
+
+### 6. Arti Bunga (Edukasi Filosofi)
+*Halaman artikel edukasi tentang makna dan filosofi di balik berbagai jenis bunga.*
+
+---
+
+**© 2026 Bloom & Bouquet. All Rights Reserved.**
